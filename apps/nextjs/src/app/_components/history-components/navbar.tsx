@@ -25,7 +25,7 @@ export function YearLabel(props: { year?: number }) {
 
 export function HistoryPageNavBar() {
   return (
-    <div className="w-full border-b-2 border-b-gray-500 bg-[#E9C1C9] p-10 ">
+    <div className="absolute w-full border-b-2 border-b-gray-500 bg-[#E9C1C9] p-10 ">
       <div className="flex flex-row justify-center gap-20 align-middle">
         <MonthBackButton />
         <div className="flex flex-col">
