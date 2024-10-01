@@ -2,12 +2,22 @@
 
 import { useState } from "react";
 
-interface Transaction {
+export interface Transaction {
   date: Date;
   amount: number;
-  paymentMethod: string;
-  title: string;
+  paymentMethod: string | undefined;
+  title: string | undefined;
   type: string; //expense or income
+}
+
+export interface DailyHistory {
+  date: Date;
+  transactions: [t: Transaction];
+}
+
+export interface WeeklyHistory {
+  week: [startDate: Date, endDate: Date];
+  t: Transaction;
 }
 
 export function TransactionHistory() {
@@ -23,7 +33,7 @@ export function TransactionHistory() {
     }
   };
   return (
-    <div className="my-28 flex min-h-full max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8">
+    <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36">
       <TransactionHistoryNav changeView={setView} view={view} />
       <TransactionHistoryTotal />
       {renderTransactionHistory()}
@@ -85,17 +95,19 @@ export function TransactionHistoryTotal() {
 
 export function DailyTransactionHistory() {
   const dailyTransactions: string[] = ["Date 1", "Date 2", "Date 3"];
-  //   const dailyTransactions: Map<Date, Transaction[]>
+  // keep all transactions from each date
+  // const dailyTransactions: Map<Date, Transaction[]>
 
   return (
     <div className="flex flex-col">
-      {dailyTransactions.map((transaction, index) => (
+      {dailyTransactions.map((date, index) => (
         <div key={index} className="py-2">
-          <div className="text-xl font-semibold">{transaction}</div>
+          <div className="text-xl font-semibold">{date}</div>
           <div className="flex flex-col gap-2 py-2">
             <DailyTransaction />
             <DailyTransaction />
             <DailyTransaction />
+            {/* in the real thing have to loop */}
           </div>
         </div>
       ))}
@@ -104,7 +116,34 @@ export function DailyTransactionHistory() {
 }
 
 export function MonthlyTransactionHistory() {
-  return <p>monthly</p>;
+  const monthlyTransactions: string[] = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  return (
+    <div className="flex flex-col">
+      {monthlyTransactions.map((month, index) => (
+        <div key={index} className="py-2">
+          <div className="text-xl font-semibold">{month}</div>
+          <div className="flex flex-col gap-2 py-3">
+            <MonthlyTransaction />
+            {/* in the real thing have to loop */}
+          </div>
+        </div>
+      ))}
+    </div>
+    // <p>monthly</p>
+  );
 }
 
 export function TransactionHistorySummary() {
@@ -119,6 +158,46 @@ export function DailyTransaction() {
         <div className="flex-1 text-left">Payment Method</div>
         <div className="flex-none text-right">Amount</div>
       </div>
+    </div>
+  );
+}
+
+export function MonthlyTransaction() {
+  //use WeeklyHistory
+  const weeks: (string | number)[][] = [
+    ["week1", 100],
+    ["week2", 200],
+    ["week3", 200],
+    ["week4", 100],
+  ];
+  return (
+    <div className="flex flex-col rounded-xl">
+      <div className="r flex flex-row gap-2 rounded-t-xl border border-black bg-[#715F51] p-4 text-center">
+        <div className="flex flex-1 text-center text-[#FEF8ED]">range</div>
+        <div className=" text-[#FEF8ED]">income</div>
+        <div className=" text-[#FEF8ED]">expense</div>
+      </div>
+      <WeeklyTransaction week={weeks[0]} isLast={false} />
+      <WeeklyTransaction week={weeks[1]} isLast={false} />
+      <WeeklyTransaction week={weeks[2]} isLast={false} />
+      <WeeklyTransaction week={weeks[3]} isLast={true} />
+    </div>
+  );
+}
+
+export function WeeklyTransaction({
+  isLast,
+  week,
+}: {
+  isLast: boolean;
+  week: (string | number)[];
+}) {
+  return (
+    <div
+      className={`flex flex-row border-b border-l border-r border-black bg-[#FEF8ED] p-4 ${isLast ? "rounded-b-xl" : ""}`}
+    >
+      <div className="text-md flex-1 text-start font-medium">{week[0]}</div>
+      <div className="align-center text-md flex-1 text-end">{week[1]}</div>
     </div>
   );
 }
