@@ -75,61 +75,75 @@ export function TransactionHistoryNav({
 }
 
 export function TransactionHistoryTotal() {
+  const totalIncome = 100.0;
+  const totalExpense = 200.0;
+  const total: number = totalExpense - totalIncome;
   return (
     <div className="flex-rows flex max-w-full rounded-xl border border-black bg-[#BBA384] p-2">
       <div className="flex-1 flex-col text-center">
         <div className="font-medium">Income</div>
-        <div className="text-[#FEF8ED]">78.00</div>
+        <div className="text-[#FEF8ED]">{totalIncome.toFixed(2)}</div>
       </div>
       <div className="flex-1 flex-col text-center">
         <div className="font-medium">Expense</div>
-        <div className="text-[#FEF8ED]">78.00</div>
+        <div className="text-[#FEF8ED]">{totalExpense.toFixed(2)}</div>
       </div>
       <div className="flex-1 flex-col text-center">
         <div className="font-medium">Total</div>
-        <div className="text-[#FEF8ED]">78.00</div>
+        <div className="text-[#FEF8ED]">{total.toFixed(2)}</div>
       </div>
     </div>
   );
 }
 
 export function DailyTransactionHistory() {
-  const dailyTransactions: string[] = ["Date 1", "Date 2", "Date 3"];
-  // keep all transactions from each date
-  // const dailyTransactions: Map<Date, Transaction[]>
+  //use DailyTransactions interface to keep all transactions from each date
+  const transactionExample: Transaction = {
+    date: new Date("2023-09-25"),
+    amount: 150.75,
+    paymentMethod: "Cash",
+    title: "Groceries",
+    type: "expense",
+  };
 
   return (
     <div className="flex flex-col">
-      {dailyTransactions.map((date, index) => (
-        <div key={index} className="py-2">
-          <div className="text-xl font-semibold">{date}</div>
-          <div className="flex flex-col gap-2 py-2">
-            <DailyTransaction />
-            <DailyTransaction />
-            <DailyTransaction />
-            {/* in the real thing have to loop */}
-          </div>
+      <div className="py-2">
+        <div className="text-xl font-semibold">
+          {transactionExample.date
+            .toUTCString()
+            .split(" ")
+            .slice(0, 3)
+            .join(" ")}
         </div>
-      ))}
+        <div className="flex flex-col gap-2 py-3">
+          <DailyTransaction t={transactionExample} />
+          <DailyTransaction t={transactionExample} />
+          <DailyTransaction t={transactionExample} />
+          {/* in the real thing have to loop through each day*/}
+        </div>
+      </div>
     </div>
   );
 }
 
 export function MonthlyTransactionHistory() {
   const monthlyTransactions: string[] = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
+    "January",
+    "February",
+    "March",
+    "April",
     "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
+
+  //get the weekly expenses in each month and store in WeeklyHistory
   return (
     <div className="flex flex-col">
       {monthlyTransactions.map((month, index) => (
@@ -142,21 +156,22 @@ export function MonthlyTransactionHistory() {
         </div>
       ))}
     </div>
-    // <p>monthly</p>
   );
 }
 
+//haven't thought of what to do with summary but three buttons look good
 export function TransactionHistorySummary() {
   return <p>summary</p>;
 }
 
-export function DailyTransaction() {
+export function DailyTransaction({ t }: { t: Transaction }) {
+  //displays information of a single transaction
   return (
     <div className="flex flex-col rounded-xl border bg-[#FEF8ED] p-4 ">
-      <div className="">Transaction Title</div>
+      <div className="text-md font-medium">{t.title}</div>
       <div className="flex justify-between">
-        <div className="flex-1 text-left">Payment Method</div>
-        <div className="flex-none text-right">Amount</div>
+        <div className="flex-1 text-left text-sm">{t.paymentMethod}</div>
+        <div className="flex-none text-right text-sm">{t.amount}</div>
       </div>
     </div>
   );
