@@ -33,7 +33,7 @@ export function TransactionHistory() {
     }
   };
   return (
-    <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36">
+    <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
       <TransactionHistoryNav changeView={setView} view={view} />
       <TransactionHistoryTotal />
       {renderTransactionHistory()}
@@ -50,15 +50,15 @@ export function TransactionHistoryNav({
 }) {
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row p-2">
+      <div className="flex flex-row">
         <button
-          className={`flex-1 font-medium ${view === "daily" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
+          className={`flex-1 font-medium md:py-2 md:text-xl xl:py-4 ${view === "daily" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
           onClick={() => changeView("daily")}
         >
           Daily
         </button>
         <button
-          className={`flex-1 font-medium ${view === "monthly" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
+          className={`flex-1 font-medium md:py-2 md:text-xl xl:py-4 ${view === "monthly" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
           onClick={() => changeView("monthly")}
         >
           Monthly
@@ -80,15 +80,15 @@ export function TransactionHistoryTotal() {
   const total: number = totalExpense - totalIncome;
   return (
     <div className="flex-rows flex max-w-full rounded-xl border border-black bg-[#BBA384] p-2">
-      <div className="flex-1 flex-col text-center">
+      <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
         <div className="font-medium">Income</div>
         <div className="text-[#FEF8ED]">{totalIncome.toFixed(2)}</div>
       </div>
-      <div className="flex-1 flex-col text-center">
+      <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
         <div className="font-medium">Expense</div>
         <div className="text-[#FEF8ED]">{totalExpense.toFixed(2)}</div>
       </div>
-      <div className="flex-1 flex-col text-center">
+      <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
         <div className="font-medium">Total</div>
         <div className="text-[#FEF8ED]">{total.toFixed(2)}</div>
       </div>
@@ -109,7 +109,7 @@ export function DailyTransactionHistory() {
   return (
     <div className="flex flex-col">
       <div className="py-2">
-        <div className="text-xl font-semibold">
+        <div className="text-2xl font-semibold">
           {transactionExample.date
             .toUTCString()
             .split(" ")
@@ -148,7 +148,9 @@ export function MonthlyTransactionHistory() {
     <div className="flex flex-col">
       {monthlyTransactions.map((month, index) => (
         <div key={index} className="py-2">
-          <div className="text-xl font-semibold">{month}</div>
+          <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
+            {month}
+          </div>
           <div className="flex flex-col gap-2 py-3">
             <MonthlyTransaction />
             {/* in the real thing have to loop */}
@@ -167,11 +169,11 @@ export function TransactionHistorySummary() {
 export function DailyTransaction({ t }: { t: Transaction }) {
   //displays information of a single transaction
   return (
-    <div className="flex flex-col rounded-xl border bg-[#FEF8ED] p-4 ">
+    <div className="flex flex-col rounded-xl border bg-[#FEF8ED] p-4 md:text-2xl xl:text-3xl">
       <div className="text-md font-medium">{t.title}</div>
-      <div className="flex justify-between">
-        <div className="flex-1 text-left text-sm">{t.paymentMethod}</div>
-        <div className="flex-none text-right text-sm">{t.amount}</div>
+      <div className="flex justify-between text-sm md:text-xl xl:text-2xl">
+        <div className="flex-1 text-left">{t.paymentMethod}</div>
+        <div className="flex-none text-right">{t.amount}</div>
       </div>
     </div>
   );
@@ -187,7 +189,7 @@ export function MonthlyTransaction() {
   ];
   return (
     <div className="flex flex-col rounded-xl">
-      <div className="r flex flex-row gap-2 rounded-t-xl border border-black bg-[#715F51] p-4 text-center">
+      <div className="r flex flex-row gap-2 rounded-t-xl border border-black bg-[#715F51] p-4 text-center md:text-2xl xl:text-3xl">
         <div className="flex flex-1 text-center text-[#FEF8ED]">range</div>
         <div className=" text-[#FEF8ED]">income</div>
         <div className=" text-[#FEF8ED]">expense</div>
@@ -209,7 +211,7 @@ export function WeeklyTransaction({
 }) {
   return (
     <div
-      className={`flex flex-row border-b border-l border-r border-black bg-[#FEF8ED] p-4 ${isLast ? "rounded-b-xl" : ""}`}
+      className={`flex flex-row border-b border-l border-r border-black bg-[#FEF8ED] p-4 md:text-xl xl:text-2xl ${isLast ? "rounded-b-xl" : ""}`}
     >
       <div className="text-md flex-1 text-start font-medium">{week[0]}</div>
       <div className="align-center text-md flex-1 text-end">{week[1]}</div>
