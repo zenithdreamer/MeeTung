@@ -28,8 +28,8 @@ export function TransactionHistory() {
         return <DailyTransactionHistory />;
       case "monthly":
         return <MonthlyTransactionHistory />;
-      case "summary":
-        return <TransactionHistorySummary />;
+      // case "summary":
+      //   return <TransactionHistorySummary />;
     }
   };
   return (
@@ -63,12 +63,12 @@ export function TransactionHistoryNav({
         >
           Monthly
         </button>
-        <button
+        {/* <button
           className={`flex-1 font-medium ${view === "summary" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
           onClick={() => changeView("summary")}
         >
           Summary
-        </button>
+        </button> */}
       </div>
     </div>
   );
