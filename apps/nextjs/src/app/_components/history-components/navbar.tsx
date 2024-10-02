@@ -15,7 +15,7 @@ export function MonthBackButton({
 }) {
   return (
     <button
-      className="border-1 h- m-auto h-fit w-fit rounded-2xl bg-[#FFFFFF] p-1 shadow-md"
+      className="border-1 m-auto h-fit w-fit rounded-2xl bg-[#FFFFFF] p-1 shadow-md"
       onClick={() => (year > 0 ? setYear(year - 1) : setYear(year))}
     >
       <MdKeyboardArrowLeft />
