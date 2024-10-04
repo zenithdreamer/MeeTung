@@ -1,220 +1,358 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export interface Transaction {
-  date: Date;
-  amount: number;
-  paymentMethod: string | undefined;
-  title: string | undefined;
-  type: string; //expense or income
+export function EditReceiptDate({ onDateChange }) {
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  const [selectedYear, setSelectedYear] = useState(years[0]);
+  const [selectedMonth, setSelectedMonth] = useState(months[0]);
+  const [days, setDays] = useState([]);
+  const [selectedDay, setSelectedDay] = useState(1);
+
+  useEffect(() => {
+    const numDaysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+    const availableDays = Array.from(
+      { length: numDaysInMonth },
+      (_, i) => i + 1,
+    );
+    setDays(availableDays);
+
+    if (selectedDay > numDaysInMonth) {
+      setSelectedDay(1);
+    }
+
+    onDateChange(`${selectedYear}-${selectedMonth}-${selectedDay}`);
+  }, [selectedYear, selectedMonth, selectedDay, onDateChange]);
+
+  return (
+    <div className="mx-auto flex h-64">
+      <div className="flex w-full flex-row items-center justify-center">
+        <select
+          className="m-2 w-24 flex-1 rounded-xl p-2 shadow-lg"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(Number(e.target.value))}
+        >
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+        <div className="text-2xl">/</div>
+        <select
+          className="m-2 w-24 flex-1 rounded-xl p-2 shadow-lg"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(Number(e.target.value))}
+        >
+          {months.map((month) => (
+            <option key={month} value={month}>
+              {month}
+            </option>
+          ))}
+        </select>
+        <div className="text-2xl">/</div>
+        <select
+          className="m-2 w-24 flex-1 rounded-xl p-2 shadow-lg"
+          value={selectedDay}
+          onChange={(e) => setSelectedDay(Number(e.target.value))}
+        >
+          {days.map((day) => (
+            <option key={day} value={day}>
+              {day}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
 }
 
-export interface DailyHistory {
-  date: Date;
-  transactions: [t: Transaction];
-}
+export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
+  const categories = [
+    "food",
+    "cat",
+    "dog",
+    "social",
+    "beauty",
+    "gaming",
+    "other",
+  ];
 
-export interface WeeklyHistory {
-  week: [startDate: Date, endDate: Date];
-  t: Transaction;
-}
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(0);
+  const totalPages = Math.ceil(categories.length / itemsPerPage);
 
-export function TransactionHistory() {
-  const [view, setView] = useState("daily");
-  const renderTransactionHistory = () => {
-    switch (view) {
-      case "daily":
-        return <DailyTransactionHistory />;
-      case "monthly":
-        return <MonthlyTransactionHistory />;
-      // case "summary":
-      //   return <TransactionHistorySummary />;
+  const handlePrev = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
     }
   };
-  return (
-    <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
-      <TransactionHistoryNav changeView={setView} view={view} />
-      <TransactionHistoryTotal />
-      {renderTransactionHistory()}
-    </div>
-  );
-}
 
-export function TransactionHistoryNav({
-  changeView,
-  view,
-}: {
-  changeView: (view: string) => void;
-  view: string;
-}) {
+  const handleNext = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const displayedCategories = categories.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage,
+  );
+
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row">
+    <div className="mx-auto flex h-64 flex-col items-center">
+      <div className="mb-4 flex w-full items-center justify-between">
         <button
-          className={`flex-1 font-medium md:py-2 md:text-xl xl:py-4 ${view === "daily" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
-          onClick={() => changeView("daily")}
+          onClick={handlePrev}
+          disabled={currentPage === 0}
+          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
         >
-          Daily
+          &lt;
         </button>
+
+        <div className="mt-6 grid grid-cols-3 gap-4">
+          {displayedCategories.map((cat) => (
+            <div
+              key={cat}
+              onClick={() => onCategoryChange(cat)}
+              className={`flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl bg-white px-2 py-2 text-center font-bold shadow-lg ${selectedCategory === cat ? "border-2 border-gray-500 bg-pink-200" : ""}`}
+            >
+              {cat}
+            </div>
+          ))}
+        </div>
+
         <button
-          className={`flex-1 font-medium md:py-2 md:text-xl xl:py-4 ${view === "monthly" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
-          onClick={() => changeView("monthly")}
+          onClick={handleNext}
+          disabled={currentPage >= totalPages - 1}
+          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
         >
-          Monthly
+          &gt;
         </button>
-        {/* <button
-          className={`flex-1 font-medium ${view === "summary" ? "rounded-xl bg-[#766354] text-[#D8D6C7] shadow-inner" : " text-black"}`}
-          onClick={() => changeView("summary")}
-        >
-          Summary
-        </button> */}
       </div>
     </div>
   );
 }
 
-export function TransactionHistoryTotal() {
-  const totalIncome = 100.0;
-  const totalExpense = 200.0;
-  const total: number = totalExpense - totalIncome;
-  return (
-    <div className="flex-rows flex max-w-full rounded-xl border border-black bg-[#BBA384] p-2">
-      <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
-        <div className="font-medium">Income</div>
-        <div className="text-[#FEF8ED]">{totalIncome.toFixed(2)}</div>
-      </div>
-      <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
-        <div className="font-medium">Expense</div>
-        <div className="text-[#FEF8ED]">{totalExpense.toFixed(2)}</div>
-      </div>
-      <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
-        <div className="font-medium">Total</div>
-        <div className="text-[#FEF8ED]">{total.toFixed(2)}</div>
-      </div>
-    </div>
-  );
-}
+export function EditReceiptAmount({ amount, onAmountChange }) {
+  // State to track which buttons are clicked
+  const [clickedButtons, setClickedButtons] = useState({});
 
-export function DailyTransactionHistory() {
-  //use DailyTransactions interface to keep all transactions from each date
-  const transactionExample: Transaction = {
-    date: new Date("2023-09-25"),
-    amount: 150.75,
-    paymentMethod: "Cash",
-    title: "Groceries",
-    type: "expense",
+  const handleButtonClick = (value) => {
+    if (value === "<") {
+      onAmountChange(amount.slice(0, -1));
+    } else {
+      onAmountChange(amount + value);
+    }
+
+    // Mark the button as clicked
+    setClickedButtons((prev) => ({
+      ...prev,
+      [value]: true,
+    }));
+
+    // Reset the clicked state after 0.5 seconds
+    setTimeout(() => {
+      setClickedButtons((prev) => ({
+        ...prev,
+        [value]: false,
+      }));
+    }, 100);
+  };
+
+  const renderButton = (value) => {
+    return (
+      <div
+        onClick={() => handleButtonClick(value)}
+        className={`m-4 flex h-16 w-16 cursor-pointer items-center justify-center rounded-xl px-2 py-2 text-center font-bold shadow-lg ${
+          clickedButtons[value]
+            ? "border-2 border-gray-500 bg-pink-200"
+            : "bg-white"
+        }`}
+      >
+        {value}
+      </div>
+    );
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="py-2">
-        <div className="text-2xl font-semibold">
-          {transactionExample.date
-            .toUTCString()
-            .split(" ")
-            .slice(0, 3)
-            .join(" ")}
-        </div>
-        <div className="flex flex-col gap-2 py-3">
-          <DailyTransaction t={transactionExample} />
-          <DailyTransaction t={transactionExample} />
-          <DailyTransaction t={transactionExample} />
-          {/* in the real thing have to loop through each day*/}
-        </div>
+    <div className="mx-auto flex h-64 flex-row items-center">
+      <div className="flex-col">
+        {[1, 2, 3].map((num) => renderButton(num))}
+      </div>
+      <div className="flex-col items-center">
+        {[4, 5, 6].map((num) => renderButton(num))}
+      </div>
+      <div className="flex-col items-center">
+        {[7, 8, 9].map((num) => renderButton(num))}
+      </div>
+      <div className="flex-col items-center">
+        {renderButton(".")}
+        {renderButton(0)}
+        {renderButton("<")}
       </div>
     </div>
   );
 }
 
-export function MonthlyTransactionHistory() {
-  const monthlyTransactions: string[] = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+export function EditReceiptPayment({ selectedPayment, onPaymentChange }) {
+  const categories = ["cash", "card", "mobile", "crypto"];
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(0);
+  const totalPages = Math.ceil(categories.length / itemsPerPage);
+
+  const handlePrev = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const displayedCategories = categories.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage,
+  );
+
+  return (
+    <div className="mx-auto flex h-64 flex-col items-center">
+      <div className="mb-4 flex w-full items-center justify-between">
+        <button
+          onClick={handlePrev}
+          disabled={currentPage === 0}
+          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
+        >
+          &lt;
+        </button>
+
+        <div className="mt-6 grid grid-cols-3 gap-4">
+          {displayedCategories.map((cat) => (
+            <div
+              key={cat}
+              onClick={() => onPaymentChange(cat)}
+              className={`flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl bg-white px-2 py-2 text-center font-bold shadow-lg ${selectedPayment === cat ? "border-2 border-gray-500 bg-pink-200" : ""}`}
+            >
+              {cat}
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={handleNext}
+          disabled={currentPage >= totalPages - 1}
+          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
+        >
+          &gt;
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function EditReceiptNote({ note, onNoteChange }) {
+  return (
+    <div className="mx-auto flex h-64">
+      <div className="flex w-full flex-row items-center justify-center">
+        <input
+          type="text"
+          value={note}
+          onChange={(e) => onNoteChange(e.target.value)}
+          className="rounded-lg px-2 py-4"
+        />
+      </div>
+    </div>
+  );
+}
+
+export function EditTransaction() {
+  const [step, setStep] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedPayment, setSelectedPayment] = useState("");
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const [date, setDate] = useState("");
+
+  const stepTitles = [
+    "choose date...",
+    "choose category...",
+    "enter amount...",
+    "choose payment type...",
+    "enter notes...",
   ];
 
-  //get the weekly expenses in each month and store in WeeklyHistory
+  const handleNext = () => {
+    if (step < 4) setStep(step + 1);
+  };
+
+  const handlePrev = () => {
+    if (step > 0) setStep(step - 1);
+  };
+
+  const showlog = () => {
+    console.log({
+      date,
+      category: selectedCategory,
+      amount,
+      payment: selectedPayment,
+      note,
+    });
+  };
+
   return (
-    <div className="flex flex-col">
-      {monthlyTransactions.map((month, index) => (
-        <div key={index} className="py-2">
-          <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
-            {month}
-          </div>
-          <div className="flex flex-col gap-2 py-3">
-            <MonthlyTransaction />
-            {/* in the real thing have to loop */}
-          </div>
+    <div className="flex h-screen max-w-full flex-col bg-gradient-to-b from-[#F1DCE0] to-[#C8D1A0]">
+      <div className="flex flex-row items-center justify-between border-y-2 border-gray-600 bg-transparent p-4">
+        <div className="text-left text-xl font-bold text-[#000000]">
+          {stepTitles[step]}
         </div>
-      ))}
-    </div>
-  );
-}
-
-//haven't thought of what to do with summary but three buttons look good
-export function TransactionHistorySummary() {
-  return <p>summary</p>;
-}
-
-export function DailyTransaction({ t }: { t: Transaction }) {
-  //displays information of a single transaction
-  return (
-    <div className="flex flex-col rounded-xl border bg-[#FEF8ED] p-4 md:text-2xl xl:text-3xl">
-      <div className="text-md font-medium">{t.title}</div>
-      <div className="flex justify-between text-sm md:text-xl xl:text-2xl">
-        <div className="flex-1 text-left">{t.paymentMethod}</div>
-        <div className="flex-none text-right">{t.amount}</div>
+        <div className="flex space-x-4">
+          <button
+            onClick={handlePrev}
+            disabled={step === 0}
+            className="px-2 text-2xl font-bold disabled:opacity-50"
+          >
+            &lt;
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={step === 4}
+            className="px-2 text-2xl font-bold disabled:opacity-50"
+          >
+            &gt;
+          </button>
+        </div>
       </div>
-    </div>
-  );
-}
-
-export function MonthlyTransaction() {
-  //use WeeklyHistory
-  const weeks: (string | number)[][] = [
-    ["week1", 100],
-    ["week2", 200],
-    ["week3", 200],
-    ["week4", 100],
-  ];
-  return (
-    <div className="flex flex-col rounded-xl">
-      <div className="r flex flex-row gap-2 rounded-t-xl border border-black bg-[#715F51] p-4 text-center md:text-2xl xl:text-3xl">
-        <div className="flex flex-1 text-center text-[#FEF8ED]">range</div>
-        <div className=" text-[#FEF8ED]">income</div>
-        <div className=" text-[#FEF8ED]">expense</div>
+      {step === 0 && <EditReceiptDate onDateChange={setDate} />}
+      {step === 1 && (
+        <EditReceiptCategory
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+      )}
+      {step === 2 && (
+        <EditReceiptAmount amount={amount} onAmountChange={setAmount} />
+      )}
+      {step === 3 && (
+        <EditReceiptPayment
+          selectedPayment={selectedPayment}
+          onPaymentChange={setSelectedPayment}
+        />
+      )}
+      {step === 4 && <EditReceiptNote note={note} onNoteChange={setNote} />}
+      <div className="mt-4 flex justify-end px-4 text-lg font-bold">
+        <button
+          className="cursor-pointer border-2 border-black p-2"
+          onClick={showlog}
+        >
+          DONE
+        </button>
       </div>
-      <WeeklyTransaction week={weeks[0]} isLast={false} />
-      <WeeklyTransaction week={weeks[1]} isLast={false} />
-      <WeeklyTransaction week={weeks[2]} isLast={false} />
-      <WeeklyTransaction week={weeks[3]} isLast={true} />
-    </div>
-  );
-}
-
-export function WeeklyTransaction({
-  isLast,
-  week,
-}: {
-  isLast: boolean;
-  week: (string | number)[];
-}) {
-  return (
-    <div
-      className={`flex flex-row border-b border-l border-r border-black bg-[#FEF8ED] p-4 md:text-xl xl:text-2xl ${isLast ? "rounded-b-xl" : ""}`}
-    >
-      <div className="text-md flex-1 text-start font-medium">{week[0]}</div>
-      <div className="align-center text-md flex-1 text-end">{week[1]}</div>
     </div>
   );
 }

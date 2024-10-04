@@ -1,6 +1,7 @@
 // src/app/profile/page.tsx
 "use client";
 
+import { EditTransaction } from "../_components/transaction-components/edit-transaction";
 import { ShowTransaction } from "../_components/transaction-components/show-transaction";
 import { TransactionNav } from "../_components/transaction-components/transaction-nav";
 
@@ -13,6 +14,7 @@ export default function HistoryPage() {
     <div className="flex h-screen max-w-full flex-col">
       <TransactionNav />
       <ShowTransaction />
+      <EditTransaction />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-export function RecieptDate() {
+export function ReceiptDate() {
   const date = 12;
   const month = "SEP";
   const year = 2032;
@@ -16,7 +16,7 @@ export function RecieptDate() {
   );
 }
 
-export function RecieptCategory() {
+export function ReceiptCategory() {
   const category = "FOOD";
 
   return (
@@ -27,7 +27,7 @@ export function RecieptCategory() {
   );
 }
 
-export function RecieptAmount() {
+export function ReceiptAmount() {
   const amount = 50023;
 
   return (
@@ -38,7 +38,7 @@ export function RecieptAmount() {
   );
 }
 
-export function RecieptPayMethod() {
+export function ReceiptPayMethod() {
   const type = "CASH";
 
   return (
@@ -49,7 +49,7 @@ export function RecieptPayMethod() {
   );
 }
 
-export function RecieptNote() {
+export function ReceiptNote() {
   const note = "WOW, YUMMY";
 
   return (
@@ -60,7 +60,7 @@ export function RecieptNote() {
   );
 }
 
-export function RecieptThank() {
+export function ReceiptThank() {
   return (
     <div className="flex w-full items-center justify-center pt-6 text-center text-lg">
       <div className="text-[#A7B279]">THANK YOU</div>
@@ -68,19 +68,19 @@ export function RecieptThank() {
   );
 }
 
-export function ShowReciept() {
+export function ShowReceipt() {
   return (
     <div className="mx-auto flex bg-white shadow-lg">
       <div className="flex w-max flex-col bg-[#F8F9FA] p-8 text-center md:text-2xl xl:text-3xl">
         <div className="w-full flex-1 px-8 py-4 text-center text-xl font-bold text-[#000000]">
           MEETUNG
         </div>
-        <RecieptDate />
-        <RecieptCategory />
-        <RecieptAmount />
-        <RecieptPayMethod />
-        <RecieptNote />
-        <RecieptThank />
+        <ReceiptDate />
+        <ReceiptCategory />
+        <ReceiptAmount />
+        <ReceiptPayMethod />
+        <ReceiptNote />
+        <ReceiptThank />
       </div>
     </div>
   );
@@ -88,9 +88,9 @@ export function ShowReciept() {
 
 export function ShowTransaction() {
   return (
-    <div className="flex h-screen max-w-full bg-[#E9C1C9]">
+    <div className="flex h-screen max-w-full bg-[#F1DCE0]">
       <div className="flex flex-1 items-center justify-center">
-        <ShowReciept />
+        <ShowReceipt />
       </div>
     </div>
   );
