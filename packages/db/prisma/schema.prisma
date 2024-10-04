@@ -22,6 +22,7 @@ model Category {
 model Transaction {
     id         String   @id @default(cuid())
     userId     String
+    //cash card etc...
     type       String
     amount     Int
     catagoryId String

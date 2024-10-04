@@ -39,10 +39,9 @@ export const authConfig = {
 export const validateToken = async (
   token: string,
 ): Promise<NextAuthSession | null> => {
-  const sessionToken = token.slice("Bearer ".length);
   const session = await prisma.session.findUnique({
     where: {
-      sessionToken: sessionToken,
+      token,
     },
     include: {
       user: true,
@@ -53,7 +52,7 @@ export const validateToken = async (
         user: {
           ...session.user,
         },
-        expires: session.expires.toISOString(),
+        expires: session.expires_at.toISOString(),
       }
     : null;
 };
@@ -61,7 +60,7 @@ export const validateToken = async (
 export const invalidateSessionToken = async (token: string) => {
   await prisma.session.delete({
     where: {
-      sessionToken: token,
+      token: token,
     },
   });
 };
