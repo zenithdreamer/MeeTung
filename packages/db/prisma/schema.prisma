@@ -11,13 +11,12 @@ datasource db {
 }
 
 // Like food transport for my GF etc...
-model Catagory {
+model Category {
     id           String        @id @default(cuid())
     userId       String
     name         String
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
-    transactions Transaction[]
 }
 
 model Transaction {
@@ -25,7 +24,6 @@ model Transaction {
     userId     String
     type       String
     amount     Int
-    catagory   Catagory @relation(fields: [catagoryId], references: [id])
     catagoryId String
 
     time DateTime @default(now())
@@ -40,6 +38,16 @@ model User {
     password     String
     money        Int
     transactions Transaction[]
+    sessions     Session[]
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
+}
+
+model Session {
+  token      String   @unique
+  userId     String
+  expires_at DateTime
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
