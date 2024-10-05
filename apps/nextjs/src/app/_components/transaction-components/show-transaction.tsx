@@ -1,24 +1,15 @@
 "use client";
 
-export function ReceiptDate() {
-  const date = 12;
-  const month = "SEP";
-  const year = 2032;
-  const day = "SUNDAY";
-
+export function ReceiptDate({ date }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">DATE: </div>
-      <div className="ml-2 text-black">
-        {day}, {month} {date}, {year}
-      </div>
+      <div className="ml-2 text-black">{date}</div>
     </div>
   );
 }
 
-export function ReceiptCategory() {
-  const category = "FOOD";
-
+export function ReceiptCategory({ category }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">CATEGORY: </div>
@@ -27,35 +18,29 @@ export function ReceiptCategory() {
   );
 }
 
-export function ReceiptAmount() {
-  const amount = 50023;
-
+export function ReceiptAmount({ amount }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">AMOUNT: </div>
-      <div className="ml-2 text-black">{amount} $</div>
+      <div className="ml-2 text-black">{amount}</div>
     </div>
   );
 }
 
-export function ReceiptPayMethod() {
-  const type = "CASH";
-
+export function ReceiptPayMethod({ payment }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">PAY METHOD: </div>
-      <div className="ml-2 text-black">{type} </div>
+      <div className="ml-2 text-black">{payment}</div>
     </div>
   );
 }
 
-export function ReceiptNote() {
-  const note = "WOW, YUMMY";
-
+export function ReceiptNote({ note }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-4 pt-2 text-left text-base">
       <div className="text-[#A7B279]">NOTE: </div>
-      <div className="ml-2 text-black">{note} </div>
+      <div className="ml-2 text-black">{note}</div>
     </div>
   );
 }
@@ -68,29 +53,29 @@ export function ReceiptThank() {
   );
 }
 
-export function ShowReceipt() {
+export function ShowReceipt({ transaction }) {
   return (
     <div className="mx-auto flex bg-white shadow-lg">
-      <div className="flex w-max flex-col bg-[#F8F9FA] p-8 text-center md:text-2xl xl:text-3xl">
+      <div className="flex w-80 flex-col bg-[#F8F9FA] p-8 text-center md:text-2xl xl:text-3xl">
         <div className="w-full flex-1 px-8 py-4 text-center text-xl font-bold text-[#000000]">
           MEETUNG
         </div>
-        <ReceiptDate />
-        <ReceiptCategory />
-        <ReceiptAmount />
-        <ReceiptPayMethod />
-        <ReceiptNote />
+        <ReceiptDate date={transaction.date} />
+        <ReceiptCategory category={transaction.category} />
+        <ReceiptAmount amount={transaction.amount} />
+        <ReceiptPayMethod payment={transaction.payment} />
+        <ReceiptNote note={transaction.note} />
         <ReceiptThank />
       </div>
     </div>
   );
 }
 
-export function ShowTransaction() {
+export function ShowTransaction({ transaction }) {
   return (
     <div className="flex h-screen max-w-full bg-[#F1DCE0]">
       <div className="flex flex-1 items-center justify-center">
-        <ShowReceipt />
+        <ShowReceipt transaction={transaction} />
       </div>
     </div>
   );

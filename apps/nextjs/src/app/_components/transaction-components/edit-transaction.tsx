@@ -2,15 +2,19 @@
 
 import { useEffect, useState } from "react";
 
-export function EditReceiptDate({ onDateChange }) {
+export function EditReceiptDate({ date, onDateChange }) {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
-  const [selectedYear, setSelectedYear] = useState(years[0]);
-  const [selectedMonth, setSelectedMonth] = useState(months[0]);
+  const [selectedYear, setSelectedYear] = useState(
+    new Date(date).getFullYear(),
+  );
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date(date).getMonth() + 1,
+  );
   const [days, setDays] = useState([]);
-  const [selectedDay, setSelectedDay] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(new Date(date).getDate());
 
   useEffect(() => {
     const numDaysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
@@ -24,8 +28,11 @@ export function EditReceiptDate({ onDateChange }) {
       setSelectedDay(1);
     }
 
-    onDateChange(`${selectedYear}-${selectedMonth}-${selectedDay}`);
-  }, [selectedYear, selectedMonth, selectedDay, onDateChange]);
+    const newDate = `${selectedYear}-${selectedMonth}-${selectedDay}`;
+    if (newDate !== date) {
+      onDateChange(newDate);
+    }
+  }, [selectedYear, selectedMonth, selectedDay]);
 
   return (
     <div className="mx-auto flex h-64">
@@ -103,7 +110,7 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
   );
 
   return (
-    <div className="mx-auto flex h-64 flex-col items-center">
+    <div className="mx-auto mt-4 flex h-64 flex-col items-center">
       <div className="mb-4 flex w-full items-center justify-between">
         <button
           onClick={handlePrev}
@@ -112,22 +119,24 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
         >
           &lt;
         </button>
-
-        <div className="mt-6 grid grid-cols-3 gap-4">
-          {displayedCategories.map((cat) => (
-            <div
-              key={cat}
-              onClick={() => onCategoryChange(cat)}
-              className={`flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl bg-white px-2 py-2 text-center font-bold shadow-lg ${selectedCategory === cat ? "border-2 border-gray-500 bg-pink-200" : ""}`}
+        <div className="grid grid-cols-2 gap-4">
+          {displayedCategories.map((category) => (
+            <button
+              key={category}
+              onClick={() => onCategoryChange(category)}
+              className={`${
+                selectedCategory === category
+                  ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 shadow-lg"
+                  : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+              }`}
             >
-              {cat}
-            </div>
+              {category}
+            </button>
           ))}
         </div>
-
         <button
           onClick={handleNext}
-          disabled={currentPage >= totalPages - 1}
+          disabled={currentPage === totalPages - 1}
           className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
         >
           &gt;
@@ -138,71 +147,34 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
 }
 
 export function EditReceiptAmount({ amount, onAmountChange }) {
-  // State to track which buttons are clicked
-  const [clickedButtons, setClickedButtons] = useState({});
-
-  const handleButtonClick = (value) => {
-    if (value === "<") {
-      onAmountChange(amount.slice(0, -1));
-    } else {
-      onAmountChange(amount + value);
-    }
-
-    // Mark the button as clicked
-    setClickedButtons((prev) => ({
-      ...prev,
-      [value]: true,
-    }));
-
-    // Reset the clicked state after 0.5 seconds
-    setTimeout(() => {
-      setClickedButtons((prev) => ({
-        ...prev,
-        [value]: false,
-      }));
-    }, 100);
-  };
-
-  const renderButton = (value) => {
-    return (
-      <div
-        onClick={() => handleButtonClick(value)}
-        className={`m-4 flex h-16 w-16 cursor-pointer items-center justify-center rounded-xl px-2 py-2 text-center font-bold shadow-lg ${
-          clickedButtons[value]
-            ? "border-2 border-gray-500 bg-pink-200"
-            : "bg-white"
-        }`}
-      >
-        {value}
-      </div>
-    );
-  };
-
   return (
-    <div className="mx-auto flex h-64 flex-row items-center">
-      <div className="flex-col">
-        {[1, 2, 3].map((num) => renderButton(num))}
-      </div>
-      <div className="flex-col items-center">
-        {[4, 5, 6].map((num) => renderButton(num))}
-      </div>
-      <div className="flex-col items-center">
-        {[7, 8, 9].map((num) => renderButton(num))}
-      </div>
-      <div className="flex-col items-center">
-        {renderButton(".")}
-        {renderButton(0)}
-        {renderButton("<")}
+    <div className="mx-auto flex h-64">
+      <div className="flex w-full flex-row items-center justify-center">
+        <input
+          className="m-2 w-24 flex-1 rounded-xl p-2 shadow-lg"
+          type="number"
+          value={amount}
+          onChange={(e) => onAmountChange(e.target.value)}
+        />
       </div>
     </div>
   );
 }
 
-export function EditReceiptPayment({ selectedPayment, onPaymentChange }) {
-  const categories = ["cash", "card", "mobile", "crypto"];
+export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
+  const paymentMethods = [
+    "cash",
+    "credit",
+    "bank",
+    "ad",
+    "sww",
+    "bafenk",
+    "banak",
+  ];
+
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = Math.ceil(categories.length / itemsPerPage);
+  const totalPages = Math.ceil(paymentMethods.length / itemsPerPage);
 
   const handlePrev = () => {
     if (currentPage > 0) {
@@ -216,13 +188,13 @@ export function EditReceiptPayment({ selectedPayment, onPaymentChange }) {
     }
   };
 
-  const displayedCategories = categories.slice(
+  const displayedCategories = paymentMethods.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage,
   );
 
   return (
-    <div className="mx-auto flex h-64 flex-col items-center">
+    <div className="mx-auto mt-4 flex h-64 flex-col items-center">
       <div className="mb-4 flex w-full items-center justify-between">
         <button
           onClick={handlePrev}
@@ -231,22 +203,24 @@ export function EditReceiptPayment({ selectedPayment, onPaymentChange }) {
         >
           &lt;
         </button>
-
-        <div className="mt-6 grid grid-cols-3 gap-4">
-          {displayedCategories.map((cat) => (
-            <div
-              key={cat}
-              onClick={() => onPaymentChange(cat)}
-              className={`flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl bg-white px-2 py-2 text-center font-bold shadow-lg ${selectedPayment === cat ? "border-2 border-gray-500 bg-pink-200" : ""}`}
+        <div className="grid grid-cols-2 gap-4">
+          {displayedCategories.map((category, index) => (
+            <button
+              key={`${category}-${index}`}
+              onClick={() => onMethodChange(category)}
+              className={`${
+                selectedMethod === category
+                  ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 shadow-lg"
+                  : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+              }`}
             >
-              {cat}
-            </div>
+              {category}
+            </button>
           ))}
         </div>
-
         <button
           onClick={handleNext}
-          disabled={currentPage >= totalPages - 1}
+          disabled={currentPage === totalPages - 1}
           className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
         >
           &gt;
@@ -261,23 +235,18 @@ export function EditReceiptNote({ note, onNoteChange }) {
     <div className="mx-auto flex h-64">
       <div className="flex w-full flex-row items-center justify-center">
         <input
+          className="m-2 w-96 flex-1 rounded-xl p-2 shadow-lg"
           type="text"
           value={note}
           onChange={(e) => onNoteChange(e.target.value)}
-          className="rounded-lg px-2 py-4"
         />
       </div>
     </div>
   );
 }
 
-export function EditTransaction() {
+export function EditTransaction({ transaction, onTransactionChange }) {
   const [step, setStep] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedPayment, setSelectedPayment] = useState("");
-  const [amount, setAmount] = useState("");
-  const [note, setNote] = useState("");
-  const [date, setDate] = useState("");
 
   const stepTitles = [
     "choose date...",
@@ -293,16 +262,6 @@ export function EditTransaction() {
 
   const handlePrev = () => {
     if (step > 0) setStep(step - 1);
-  };
-
-  const showlog = () => {
-    console.log({
-      date,
-      category: selectedCategory,
-      amount,
-      payment: selectedPayment,
-      note,
-    });
   };
 
   return (
@@ -328,31 +287,36 @@ export function EditTransaction() {
           </button>
         </div>
       </div>
-      {step === 0 && <EditReceiptDate onDateChange={setDate} />}
+      {step === 0 && (
+        <EditReceiptDate
+          date={transaction.date}
+          onDateChange={(value) => onTransactionChange("date", value)}
+        />
+      )}
       {step === 1 && (
         <EditReceiptCategory
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
+          selectedCategory={transaction.category}
+          onCategoryChange={(value) => onTransactionChange("category", value)}
         />
       )}
       {step === 2 && (
-        <EditReceiptAmount amount={amount} onAmountChange={setAmount} />
-      )}
-      {step === 3 && (
-        <EditReceiptPayment
-          selectedPayment={selectedPayment}
-          onPaymentChange={setSelectedPayment}
+        <EditReceiptAmount
+          amount={transaction.amount}
+          onAmountChange={(value) => onTransactionChange("amount", value)}
         />
       )}
-      {step === 4 && <EditReceiptNote note={note} onNoteChange={setNote} />}
-      <div className="mt-4 flex justify-end px-4 text-lg font-bold">
-        <button
-          className="cursor-pointer border-2 border-black p-2"
-          onClick={showlog}
-        >
-          DONE
-        </button>
-      </div>
+      {step === 3 && (
+        <EditReceiptPayMethod
+          selectedMethod={transaction.payment}
+          onMethodChange={(value) => onTransactionChange("payment", value)}
+        />
+      )}
+      {step === 4 && (
+        <EditReceiptNote
+          note={transaction.note}
+          onNoteChange={(value) => onTransactionChange("note", value)}
+        />
+      )}
     </div>
   );
 }
