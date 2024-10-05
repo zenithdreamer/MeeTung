@@ -14,6 +14,12 @@ export default {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
         mono: ["var(--font-geist-mono)", ...fontFamily.mono],
       },
+      screens: {
+        sm: "360px",
+        md: "768px",
+        lg: "1440px",
+        xl: "1920px",
+      },
     },
   },
 } satisfies Config;
