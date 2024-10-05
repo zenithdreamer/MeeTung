@@ -26,6 +26,7 @@ model Transaction {
     type       String
     amount     Int
     catagoryId String
+    description String
 
     time DateTime @default(now())
     User User     @relation(fields: [userId], references: [id])
