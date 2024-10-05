@@ -115,7 +115,7 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
         <button
           onClick={handlePrev}
           disabled={currentPage === 0}
-          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
         >
           &lt;
         </button>
@@ -137,7 +137,7 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
         <button
           onClick={handleNext}
           disabled={currentPage === totalPages - 1}
-          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
         >
           &gt;
         </button>
@@ -199,7 +199,7 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
         <button
           onClick={handlePrev}
           disabled={currentPage === 0}
-          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
         >
           &lt;
         </button>
@@ -221,7 +221,7 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
         <button
           onClick={handleNext}
           disabled={currentPage === totalPages - 1}
-          className="mx-4 mt-6 h-12 w-12 text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
         >
           &gt;
         </button>
@@ -274,14 +274,14 @@ export function EditTransaction({ transaction, onTransactionChange }) {
           <button
             onClick={handlePrev}
             disabled={step === 0}
-            className="px-2 text-2xl font-bold disabled:opacity-50"
+            className="rounded-lg border-2 border-gray-700 bg-white px-2 text-2xl font-bold disabled:opacity-50"
           >
             &lt;
           </button>
           <button
             onClick={handleNext}
             disabled={step === 4}
-            className="px-2 text-2xl font-bold disabled:opacity-50"
+            className="rounded-lg border-2 border-gray-700 bg-white px-2 text-2xl font-bold disabled:opacity-50"
           >
             &gt;
           </button>
