@@ -1,13 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { set } from "zod";
+
+import { api } from "~/trpc/react";
 
 export function LoginForm() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+  const login = api.auth.login.useMutation();
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!username || !password) {
+      return toast.error("Please fill in all fields");
+    } else {
+      const result = await login.mutateAsync({ username, password });
+      toast.success("Login successful");
+      localStorage.setItem("token", result.token);
+
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
+    }
   };
 
   return (
@@ -21,23 +39,25 @@ export function LoginForm() {
           type="text"
           id="username"
           value={username}
+          onChange={(e) => setUsername(e.target.value)}
           placeholder="enter a username"
         />
         <input
-          className="text-md  rounded-sm p-1 pl-2 font-medium text-[#664F3D] shadow-inner "
-          type="text"
+          className="text-md rounded-sm p-1 pl-2 font-medium text-[#664F3D] shadow-inner"
+          type="password"
           id="password"
           value={password}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="enter a password"
         />
-      </form>
-      <div className="flex flex-col gap-4">
         <button
           className="rounded-2xl bg-[#eac6cc] font-semibold text-[#664F3D] shadow-inner hover:bg-[#e8b2bc]"
           type="submit"
         >
           login :3
         </button>
+      </form>
+      <div className="flex flex-col gap-4">
         <button className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]">
           register new account
         </button>
