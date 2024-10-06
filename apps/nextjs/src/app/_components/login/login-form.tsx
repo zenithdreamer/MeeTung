@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { set } from "zod";
 
 import { api } from "~/trpc/react";
 
@@ -12,6 +11,7 @@ export function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const login = api.auth.login.useMutation();
+
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -26,6 +26,10 @@ export function LoginForm() {
         router.push("/");
       }, 1000);
     }
+  };
+
+  const handleRegisterClick = () => {
+    router.push("/register");
   };
 
   return (
@@ -58,7 +62,10 @@ export function LoginForm() {
         </button>
       </form>
       <div className="flex flex-col gap-4">
-        <button className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]">
+        <button
+          className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
+          onClick={handleRegisterClick}
+        >
           register new account
         </button>
       </div>
