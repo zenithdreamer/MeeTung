@@ -162,15 +162,7 @@ export function EditReceiptAmount({ amount, onAmountChange }) {
 }
 
 export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
-  const paymentMethods = [
-    "cash",
-    "credit",
-    "bank",
-    "ad",
-    "sww",
-    "bafenk",
-    "banak",
-  ];
+  const paymentMethods = ["cash", "credit", "bank", "ass"];
 
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(0);
