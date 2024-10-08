@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLeft";
 import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
+
+import { toast } from "@mee-tung/ui/toast";
+
+import { api } from "~/trpc/react";
 
 const curYear = new Date().getFullYear();
 
@@ -50,6 +55,21 @@ export function YearLabel(props: { year?: number }) {
 
 export function HistoryPageNavBar() {
   const [year, setYear] = useState(curYear);
+  const router = useRouter();
+  const logout = api.auth.logout.useMutation();
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      await logout.mutateAsync().catch((err) => {
+        console.error(err);
+      });
+
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  };
 
   return (
     <div className="absolute w-full border-b-2 border-b-gray-500 bg-[#E9C1C9] p-10 transition-all md:p-9 xl:p-8">
@@ -62,6 +82,14 @@ export function HistoryPageNavBar() {
           <YearLabel year={year} />
         </div>
         <MonthNextButton year={year} setYear={setYear} />
+        <div className="mb-4 flex justify-end">
+          <button
+            onClick={handleLogout}
+            className="rounded-xl bg-[#C92D2D] px-4 py-2 text-white shadow hover:bg-[#B82A2A] md:text-lg"
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );

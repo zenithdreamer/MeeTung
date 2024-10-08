@@ -98,7 +98,7 @@ export const authRouter = {
       };
     }),
 
-  signOut: protectedProcedure.mutation(async (opts) => {
+  logout: protectedProcedure.mutation(async (opts) => {
     if (!opts.ctx.token) {
       return { success: false };
     }
