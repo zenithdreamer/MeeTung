@@ -47,6 +47,16 @@ export const categoryRouter = {
       });
     }
 
+    // Change all transactions with this category method to null
+    await prisma.transaction.updateMany({
+      where: {
+        categoryId: id,
+      },
+      data: {
+        categoryId: null,
+      },
+    });
+
     await prisma.category.delete({
       where: {
         id,
