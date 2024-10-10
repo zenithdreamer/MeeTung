@@ -89,7 +89,6 @@ export const authRouter = {
           firstname,
           lastname,
           password: hashedPassword,
-          money: 0, // Set initial money value to 0
         },
       });
 

@@ -1,13 +1,13 @@
 import { TRPCError } from "@trpc/server";
 
 import { prisma } from "@mee-tung/db";
-import { createCategorySchema } from "@mee-tung/validators";
+import { CreateCategorySchema } from "@mee-tung/validators";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const categoryRouter = {
   createCategory: publicProcedure
-    .input(createCategorySchema)
+    .input(CreateCategorySchema)
     .mutation(async ({ input, ctx }) => {
       if (!ctx.session || !ctx.session.user) {
         throw new TRPCError({

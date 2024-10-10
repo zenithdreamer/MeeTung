@@ -6,22 +6,6 @@ import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 
-/*     model User {
-        id           String        @id @default(cuid())
-        username     String        @unique
-        firstname    String
-        lastname     String
-        password     String
-        money        Int
-        transactions Transaction[]
-        sessions     Session[]
-        types        type[]
-        categories   Category[]
-        createdAt    DateTime      @default(now())
-        updatedAt    DateTime      @updatedAt
-      }
-       */
-
 export function RegisterForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
