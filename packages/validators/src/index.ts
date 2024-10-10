@@ -28,6 +28,21 @@ export const RegisterPostSchema = z.object({
   password: z.string(),
 });
 
+export const createTransactionSchema = z.object({
+  amount: z.number().int(),
+  description: z.string().min(1).optional(),
+  categoryId: z.string().min(1),
+  paymentMethodId: z.string().min(1),
+});
+
+export const editTransactionSchema = z.object({
+  id: z.string().min(1),
+  amount: z.number().int(),
+  description: z.string().min(1).optional(),
+  categoryId: z.string().min(1),
+  paymentMethodId: z.string().min(1),
+});
+
 export const CreateCategorySchema = z.object({
   name: z.string().min(1),
 });

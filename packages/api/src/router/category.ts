@@ -6,15 +6,9 @@ import { CreateCategorySchema } from "@mee-tung/validators";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const categoryRouter = {
-  createCategory: publicProcedure
+  createCategory: protectedProcedure
     .input(CreateCategorySchema)
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.session || !ctx.session.user) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "User is not authenticated.",
-        });
-      }
       const userId = ctx.session.user.id;
 
       const category = await prisma.category.create({
