@@ -55,6 +55,13 @@ export const transactionRouter = {
         },
       });
 
+      if (!transaction) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "transaction not found.",
+        });
+      }
+
       return transaction;
     }),
 
