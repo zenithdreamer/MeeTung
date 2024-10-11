@@ -128,8 +128,8 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
               onClick={() => onCategoryChange(category)}
               className={`${
                 selectedCategory === category
-                  ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 shadow-lg"
-                  : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+                  ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 text-sm shadow-lg"
+                  : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 text-sm shadow-lg"
               }`}
             >
               {category}
@@ -202,8 +202,6 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
     setIsModalOpen(true);
   };
 
-  const handleRemovePaymentMethod = () => {};
-
   const handleAdd = async () => {
     if (!currentUser) {
       console.error("No user found.");
@@ -246,19 +244,15 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
               className="flex items-center justify-between"
             >
               <button
-                onClick={() => onMethodChange(method.id)}
+                onClick={() => onMethodChange(method.name)}
                 className={`${
-                  selectedMethod === method.id
-                    ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 shadow-lg"
-                    : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+                  selectedMethod === method.name
+                    ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 text-sm shadow-lg"
+                    : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 text-sm shadow-lg"
                 }`}
               >
                 {method.name}
               </button>
-              <button
-                onClick={handleRemovePaymentMethod}
-                className="ml-1 h-4 w-4 rounded-2xl border-2 border-gray-700 bg-red-600 shadow-lg"
-              ></button>
             </div>
           ))}
 
@@ -281,7 +275,7 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="rounded-lg bg-white p-6 shadow-lg">
+          <div className="rounded- bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-6 shadow-lg">
             <h2 className="mb-4 text-lg font-bold">Add Payment Method</h2>
             <input
               type="text"
