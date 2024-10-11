@@ -164,11 +164,22 @@ export function EditReceiptAmount({ amount, onAmountChange }) {
 }
 
 export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
-  const { data: paymentMethods = [] } = api.paymentmethod.getTypes.useQuery();
+  const { data: paymentMethods = [], refetch } =
+    api.paymentmethod.getTypes.useQuery();
+  const { data: currentUser } = api.user.getCurrentUser.useQuery();
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(0);
   const totalPages = Math.ceil(paymentMethods.length / itemsPerPage);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newMethodName, setNewMethodName] = useState("");
+
+  const createPaymentMethodMutation = api.paymentmethod.craeteType.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
   const handlePrev = () => {
     if (currentPage > 0) {
@@ -187,6 +198,36 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
     (currentPage + 1) * itemsPerPage,
   );
 
+  const handleAddPaymentMethod = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleRemovePaymentMethod = () => {};
+
+  const handleAdd = async () => {
+    if (!currentUser) {
+      console.error("No user found.");
+      return;
+    }
+
+    try {
+      await createPaymentMethodMutation.mutateAsync({
+        name: newMethodName,
+        userId: currentUser.id,
+      });
+
+      setNewMethodName("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error adding payment method:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    setNewMethodName("");
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="mx-auto mt-4 flex h-64 flex-col items-center">
       <div className="mb-4 flex w-full items-center justify-between">
@@ -200,18 +241,33 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
 
         <div className="grid grid-cols-2 gap-4">
           {displayedMethods.map((method, index) => (
-            <button
+            <div
               key={`${method.id}-${index}`}
-              onClick={() => onMethodChange(method)}
-              className={`${
-                selectedMethod === method.id
-                  ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 shadow-lg"
-                  : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
-              }`}
+              className="flex items-center justify-between"
             >
-              {method.name}{" "}
-            </button>
+              <button
+                onClick={() => onMethodChange(method.id)}
+                className={`${
+                  selectedMethod === method.id
+                    ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 shadow-lg"
+                    : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+                }`}
+              >
+                {method.name}
+              </button>
+              <button
+                onClick={handleRemovePaymentMethod}
+                className="ml-1 h-4 w-4 rounded-2xl border-2 border-gray-700 bg-red-600 shadow-lg"
+              ></button>
+            </div>
           ))}
+
+          <button
+            onClick={handleAddPaymentMethod}
+            className="w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+          >
+            +
+          </button>
         </div>
 
         <button
@@ -222,6 +278,35 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
           &gt;
         </button>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-lg font-bold">Add Payment Method</h2>
+            <input
+              type="text"
+              value={newMethodName}
+              onChange={(e) => setNewMethodName(e.target.value)}
+              className="mb-4 w-full rounded border p-2"
+              placeholder="Enter payment method name"
+            />
+            <div className="flex justify-between">
+              <button
+                onClick={handleCancel}
+                className="rounded bg-red-500 px-4 py-2 text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAdd}
+                className="rounded bg-blue-500 px-4 py-2 text-white"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
