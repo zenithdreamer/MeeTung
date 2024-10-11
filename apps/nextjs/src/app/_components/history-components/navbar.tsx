@@ -82,23 +82,6 @@ export function HistoryPageNavBar() {
           <YearLabel year={year} />
         </div>
         <MonthNextButton year={year} setYear={setYear} />
-        <div className="mb-4 flex justify-end">
-          {typeof window !== "undefined" && localStorage.getItem("token") ? (
-            <button
-              onClick={handleLogout}
-              className="rounded-xl bg-[#C92D2D] px-4 py-2 text-white shadow hover:bg-[#B82A2A] md:text-lg"
-            >
-              Logout
-            </button>
-          ) : (
-            <button
-              onClick={() => router.push("/login")}
-              className="rounded-xl bg-green-600 px-4 py-2 text-white shadow md:text-lg"
-            >
-              Login
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );

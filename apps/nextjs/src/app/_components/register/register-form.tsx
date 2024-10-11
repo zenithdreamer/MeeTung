@@ -35,7 +35,7 @@ export function RegisterForm() {
         lastname,
         password,
       });
-      toast.success("Register successful, redirecting to login");
+      toast.success("Registered successfully, redirecting to login");
       setTimeout(() => {
         router.push("/login");
       }, 1000);
@@ -49,7 +49,7 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="m-auto flex h-2/5 w-80 flex-col justify-start gap-6 rounded-2xl border border-[#BBA384] bg-transparent p-5 transition-all">
+    <div className="m-auto flex h-fit w-80 flex-col justify-start gap-4 rounded-2xl border border-[#BBA384] bg-transparent p-5 pb-8 transition-all">
       <h1 className="mt-4 text-center align-top text-xl font-bold">
         r e g i s t e r
       </h1>
@@ -68,7 +68,7 @@ export function RegisterForm() {
           id="firstname"
           value={firstname}
           onChange={(e) => setFirstname(e.target.value)}
-          placeholder="enter a first name"
+          placeholder="first name"
         />
         <input
           className="text-md rounded-sm p-1 pl-2 font-medium text-[#664F3D] shadow-inner"
@@ -76,7 +76,7 @@ export function RegisterForm() {
           id="lastname"
           value={lastname}
           onChange={(e) => setLastname(e.target.value)}
-          placeholder="enter a last name"
+          placeholder="last name"
         />
         <input
           className="text-md rounded-sm p-1 pl-2 font-medium text-[#664F3D] shadow-inner"
@@ -101,14 +101,12 @@ export function RegisterForm() {
           register :3
         </button>
       </form>
-      <div className="flex flex-col gap-4">
-        <button
-          className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
-          onClick={handleLoginClick}
-        >
-          already have an account? login
-        </button>
-      </div>
+      <button
+        className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
+        onClick={handleLoginClick}
+      >
+        already have an account? login
+      </button>
     </div>
   );
 }
