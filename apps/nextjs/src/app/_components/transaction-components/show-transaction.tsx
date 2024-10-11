@@ -27,20 +27,20 @@ export function ReceiptAmount({ amount }) {
   );
 }
 
-export function ReceiptPayMethod({ payment }) {
+export function ReceiptPayMethod({ paymentMethod }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">PAY METHOD: </div>
-      <div className="ml-2 text-black">{payment}</div>
+      <div className="ml-2 text-black">{paymentMethod}</div>
     </div>
   );
 }
 
-export function ReceiptNote({ note }) {
+export function ReceiptNote({ description }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-4 pt-2 text-left text-base">
       <div className="text-[#A7B279]">NOTE: </div>
-      <div className="ml-2 text-black">{note}</div>
+      <div className="ml-2 text-black">{description}</div>
     </div>
   );
 }
@@ -63,8 +63,8 @@ export function ShowReceipt({ transaction }) {
         <ReceiptDate date={transaction.date} />
         <ReceiptCategory category={transaction.category} />
         <ReceiptAmount amount={transaction.amount} />
-        <ReceiptPayMethod payment={transaction.payment} />
-        <ReceiptNote note={transaction.note} />
+        <ReceiptPayMethod paymentMethod={transaction.payment} />
+        <ReceiptNote description={transaction.description} />
         <ReceiptThank />
       </div>
     </div>

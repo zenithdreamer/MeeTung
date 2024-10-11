@@ -79,20 +79,28 @@ export function EditReceiptDate({ date, onDateChange }) {
   );
 }
 
-export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
-  const categories = [
-    "food",
-    "cat",
-    "dog",
-    "social",
-    "beauty",
-    "gaming",
-    "other",
-  ];
+export function EditReceiptCategory({
+  selectedCategory,
+  selectedCategoryId,
+  onCategoryChange,
+  onCategoryIdChange,
+}) {
+  const { data: category = [], refetch } =
+    api.category.getCategories.useQuery();
+  const { data: currentUser } = api.user.getCurrentUser.useQuery();
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = Math.ceil(categories.length / itemsPerPage);
+  const totalPages = Math.ceil(category.length / itemsPerPage);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+
+  const createCategoryMutation = api.category.createCategory.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
   const handlePrev = () => {
     if (currentPage > 0) {
@@ -106,10 +114,43 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
     }
   };
 
-  const displayedCategories = categories.slice(
+  const handleCategoryData = (name, id) => {
+    onCategoryChange(name);
+    onCategoryIdChange(id);
+  };
+
+  const displayedCategories = category.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage,
   );
+
+  const handleAddCategory = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleAdd = async () => {
+    if (!currentUser) {
+      console.error("No user found.");
+      return;
+    }
+
+    try {
+      await createCategoryMutation.mutateAsync({
+        name: newCategoryName,
+        userId: currentUser.id,
+      });
+
+      setNewCategoryName("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error adding category:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    setNewCategoryName("");
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="mx-auto mt-4 flex h-64 flex-col items-center">
@@ -122,19 +163,31 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
           &lt;
         </button>
         <div className="grid grid-cols-2 gap-4">
-          {displayedCategories.map((category) => (
-            <button
-              key={category}
-              onClick={() => onCategoryChange(category)}
-              className={`${
-                selectedCategory === category
-                  ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 text-sm shadow-lg"
-                  : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 text-sm shadow-lg"
-              }`}
+          {displayedCategories.map((method, index) => (
+            <div
+              key={`${method.id}-${index}`}
+              className="flex items-center justify-between"
             >
-              {category}
-            </button>
+              <button
+                onClick={() => handleCategoryData(method.name, method.id)}
+                className={`${
+                  selectedCategoryId === method.id &&
+                  selectedCategory === method.name
+                    ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 text-sm shadow-lg"
+                    : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 text-sm shadow-lg"
+                }`}
+              >
+                {method.name}
+              </button>
+            </div>
           ))}
+
+          <button
+            onClick={handleAddCategory}
+            className="w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+          >
+            +
+          </button>
         </div>
         <button
           onClick={handleNext}
@@ -144,11 +197,45 @@ export function EditReceiptCategory({ selectedCategory, onCategoryChange }) {
           &gt;
         </button>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded- bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-6 shadow-lg">
+            <h2 className="mb-4 text-lg font-bold">Add Payment Method</h2>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="mb-4 w-full rounded border p-2"
+              placeholder="Enter payment method name"
+            />
+            <div className="flex justify-between">
+              <button
+                onClick={handleCancel}
+                className="rounded bg-red-500 px-4 py-2 text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAdd}
+                className="rounded bg-blue-500 px-4 py-2 text-white"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export function EditReceiptAmount({ amount, onAmountChange }) {
+  const handleChange = (e) => {
+    const value = Math.max(0, e.target.value);
+    onAmountChange(value);
+  };
+
   return (
     <div className="mx-auto flex h-64">
       <div className="flex w-full flex-row items-center justify-center">
@@ -156,14 +243,19 @@ export function EditReceiptAmount({ amount, onAmountChange }) {
           className="m-2 w-24 flex-1 rounded-xl p-2 shadow-lg"
           type="number"
           value={amount}
-          onChange={(e) => onAmountChange(e.target.value)}
+          onChange={handleChange}
         />
       </div>
     </div>
   );
 }
 
-export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
+export function EditReceiptPayMethod({
+  selectedMethod,
+  selectedMethodName,
+  onMethodChange,
+  onMethodNameChange,
+}) {
   const { data: paymentMethods = [], refetch } =
     api.paymentmethod.getTypes.useQuery();
   const { data: currentUser } = api.user.getCurrentUser.useQuery();
@@ -191,6 +283,11 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
+  };
+
+  const handlePaymentData = (name, id) => {
+    onMethodNameChange(name);
+    onMethodChange(id);
   };
 
   const displayedMethods = paymentMethods.slice(
@@ -244,9 +341,10 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
               className="flex items-center justify-between"
             >
               <button
-                onClick={() => onMethodChange(method.name)}
+                onClick={() => handlePaymentData(method.name, method.id)}
                 className={`${
-                  selectedMethod === method.name
+                  selectedMethod === method.id &&
+                  selectedMethodName === method.name
                     ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 text-sm shadow-lg"
                     : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 text-sm shadow-lg"
                 }`}
@@ -305,14 +403,14 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
   );
 }
 
-export function EditReceiptNote({ note, onNoteChange }) {
+export function EditReceiptNote({ description, onNoteChange }) {
   return (
     <div className="mx-auto flex h-64">
       <div className="flex w-full flex-row items-center justify-center">
         <input
           className="m-2 w-96 flex-1 rounded-xl p-2 shadow-lg"
           type="text"
-          value={note}
+          value={description}
           onChange={(e) => onNoteChange(e.target.value)}
         />
       </div>
@@ -371,7 +469,11 @@ export function EditTransaction({ transaction, onTransactionChange }) {
       {step === 1 && (
         <EditReceiptCategory
           selectedCategory={transaction.category}
+          selectedCategoryId={transaction.categoryId}
           onCategoryChange={(value) => onTransactionChange("category", value)}
+          onCategoryIdChange={(value) =>
+            onTransactionChange("categoryId", value)
+          }
         />
       )}
       {step === 2 && (
@@ -382,14 +484,18 @@ export function EditTransaction({ transaction, onTransactionChange }) {
       )}
       {step === 3 && (
         <EditReceiptPayMethod
-          selectedMethod={transaction.payment}
-          onMethodChange={(value) => onTransactionChange("payment", value)}
+          selectedMethod={transaction.paymentMethodId}
+          selectedMethodName={transaction.payment}
+          onMethodChange={(value) =>
+            onTransactionChange("paymentMethodId", value)
+          }
+          onMethodNameChange={(value) => onTransactionChange("payment", value)}
         />
       )}
       {step === 4 && (
         <EditReceiptNote
-          note={transaction.note}
-          onNoteChange={(value) => onTransactionChange("note", value)}
+          description={transaction.description}
+          onNoteChange={(value) => onTransactionChange("description", value)}
         />
       )}
     </div>
