@@ -49,7 +49,7 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="m-auto flex h-fit w-80 flex-col justify-start gap-4 rounded-2xl border border-[#BBA384] bg-transparent p-5 pb-10 transition-all">
+    <div className="m-auto flex h-fit w-80 flex-col justify-start gap-4 rounded-2xl border border-[#BBA384] bg-transparent p-6 pb-10 transition-all">
       <h1 className="mt-4 text-center align-top text-xl font-bold">
         r e g i s t e r
       </h1>

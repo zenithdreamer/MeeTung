@@ -33,7 +33,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="m-auto flex h-2/5 w-80 flex-col justify-start gap-5 rounded-2xl border border-[#BBA384] bg-transparent p-5 transition-all">
+    <div className="m-auto flex h-2/5 w-80 flex-col justify-start gap-5 rounded-2xl border border-[#BBA384] bg-transparent p-6 transition-all">
       <h1 className="mt-4 text-center align-top text-xl font-bold">
         l o g i n
       </h1>
