@@ -60,15 +60,13 @@ export function LoginForm() {
         >
           login :3
         </button>
-      </form>
-      <div className="flex flex-col gap-4">
         <button
           className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
           onClick={handleRegisterClick}
         >
           register new account
         </button>
-      </div>
+      </form>
     </div>
   );
 }
