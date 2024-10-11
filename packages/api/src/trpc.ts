@@ -42,7 +42,21 @@ export const createTRPCContext = async (opts: {
   session: Session | null;
 }) => {
   const authToken = opts.headers.get("Authorization") ?? null;
-  const session = await isomorphicGetSession(opts.headers);
+  const token = authToken ? authToken.replace("Bearer ", "") : "";
+  let session = null;
+
+  if (authToken) {
+    try {
+      const result = await validateToken(token);
+      if (result) {
+        session = {
+          user: result.user,
+        };
+      }
+    } catch {
+      session = null;
+    }
+  }
 
   const source = opts.headers.get("x-trpc-source") ?? "unknown";
   console.log(">>> tRPC Request from", source, "by", session?.user);
@@ -50,7 +64,7 @@ export const createTRPCContext = async (opts: {
   return {
     session,
     prisma,
-    token: authToken,
+    token,
   };
 };
 

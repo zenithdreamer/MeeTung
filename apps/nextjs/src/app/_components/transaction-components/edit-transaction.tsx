@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { api } from "~/trpc/react";
+
 export function EditReceiptDate({ date, onDateChange }) {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
@@ -162,7 +164,7 @@ export function EditReceiptAmount({ amount, onAmountChange }) {
 }
 
 export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
-  const paymentMethods = ["cash", "credit", "bank", "mybody"];
+  const { data: paymentMethods = [] } = api.paymentmethod.getTypes.useQuery();
 
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(0);
@@ -180,7 +182,7 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
     }
   };
 
-  const displayedCategories = paymentMethods.slice(
+  const displayedMethods = paymentMethods.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage,
   );
@@ -195,21 +197,23 @@ export function EditReceiptPayMethod({ selectedMethod, onMethodChange }) {
         >
           &lt;
         </button>
+
         <div className="grid grid-cols-2 gap-4">
-          {displayedCategories.map((category, index) => (
+          {displayedMethods.map((method, index) => (
             <button
-              key={`${category}-${index}`}
-              onClick={() => onMethodChange(category)}
+              key={`${method.id}-${index}`}
+              onClick={() => onMethodChange(method)}
               className={`${
-                selectedMethod === category
+                selectedMethod === method.id
                   ? "w-36 rounded-2xl border-2 border-gray-700 bg-[#e6b5be] p-6 shadow-lg"
                   : "w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
               }`}
             >
-              {category}
+              {method.name}{" "}
             </button>
           ))}
         </div>
+
         <button
           onClick={handleNext}
           disabled={currentPage === totalPages - 1}
