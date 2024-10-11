@@ -33,7 +33,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="m-auto flex h-2/5 w-80 flex-col justify-start gap-6 rounded-2xl border border-[#BBA384] bg-transparent p-5 transition-all">
+    <div className="m-auto flex h-2/5 w-80 flex-col justify-start gap-5 rounded-2xl border border-[#BBA384] bg-transparent p-5 transition-all">
       <h1 className="mt-4 text-center align-top text-xl font-bold">
         l o g i n
       </h1>
@@ -60,13 +60,13 @@ export function LoginForm() {
         >
           login :3
         </button>
-        <button
-          className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
-          onClick={handleRegisterClick}
-        >
-          register new account
-        </button>
       </form>
+      <button
+        className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
+        onClick={handleRegisterClick}
+      >
+        register new account
+      </button>
     </div>
   );
 }

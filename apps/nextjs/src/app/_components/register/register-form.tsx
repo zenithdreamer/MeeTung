@@ -100,13 +100,13 @@ export function RegisterForm() {
         >
           register :3
         </button>
-        <button
-          className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
-          onClick={handleLoginClick}
-        >
-          already have an account? login
-        </button>
       </form>
+      <button
+        className="rounded-2xl bg-[#C8D1A0] font-semibold text-[#664F3D] shadow-inner hover:bg-[#A7B279]"
+        onClick={handleLoginClick}
+      >
+        already have an account? login
+      </button>
     </div>
   );
 }
