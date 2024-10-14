@@ -27,15 +27,11 @@ const curYear = curDate.getFullYear();
 
 export function TransactionHistory() {
   const [view, setView] = useState("daily");
-  const [monthView, setMonthView] = useState(curMonth); // Initialize with current month
-  const [yearView, setYearView] = useState(curYear); // Initialize with current year
 
   const renderTransactionHistory = () => {
     switch (view) {
       case "daily":
-        return (
-          <DailyTransactionHistory monthView={monthView} yearView={yearView} />
-        );
+        return <DailyTransactionHistory />;
       case "monthly":
         return <MonthlyTransactionHistory />;
       // case "summary":
@@ -45,15 +41,7 @@ export function TransactionHistory() {
 
   return (
     <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
-      <TransactionHistoryNav
-        changeView={setView}
-        view={view}
-        monthView={monthView}
-        setMonthView={setMonthView}
-        yearView={yearView}
-        setYearView={setYearView}
-      />
-      <TransactionHistoryTotal />
+      <TransactionHistoryNav changeView={setView} view={view} />
       {renderTransactionHistory()}
     </div>
   );
@@ -62,8 +50,6 @@ export function TransactionHistory() {
 export function TransactionHistoryNav({
   changeView,
   view,
-  monthView,
-  setMonthView,
 }: {
   changeView: (view: string) => void;
   view: string;
@@ -94,31 +80,6 @@ export function TransactionHistoryNav({
           Summary
         </button> */}
       </div>
-      <div className="flex flex-row p-4">
-        <button
-          className="border-1 m-auto h-fit w-fit p-1"
-          onClick={() =>
-            monthView > 1
-              ? setMonthView(monthView - 1)
-              : setMonthView(monthView)
-          }
-        >
-          <MdKeyboardArrowLeft />
-        </button>
-        <div className="text-center text-sm font-semibold md:text-3xl xl:text-4xl">
-          {months[monthView]}
-        </div>
-        <button
-          className="border-1 m-auto h-fit w-fit p-1"
-          onClick={() =>
-            monthView < 12
-              ? setMonthView(monthView + 1)
-              : setMonthView(monthView)
-          }
-        >
-          <MdKeyboardArrowRight />
-        </button>
-      </div>
     </div>
   );
 }
@@ -145,7 +106,10 @@ export function TransactionHistoryTotal() {
   );
 }
 
-export function DailyTransactionHistory({ monthView, yearView }) {
+export function DailyTransactionHistory() {
+  const [monthView, setMonthView] = useState(curMonth); // Initialize with current month
+  const [yearView, setYearView] = useState(curYear); // Initialize with current year
+
   const {
     data: dailyTransactions,
     isLoading,
@@ -171,6 +135,32 @@ export function DailyTransactionHistory({ monthView, yearView }) {
 
   return (
     <div className="flex flex-col transition-all">
+      <div className="flex flex-row p-4">
+        <button
+          className="border-1 m-auto h-fit w-fit p-1"
+          onClick={() =>
+            monthView > 1
+              ? setMonthView(monthView - 1)
+              : setMonthView(monthView)
+          }
+        >
+          <MdKeyboardArrowLeft />
+        </button>
+        <div className="text-center text-sm font-semibold md:text-3xl xl:text-4xl">
+          {months[monthView]}
+        </div>
+        <button
+          className="border-1 m-auto h-fit w-fit p-1"
+          onClick={() =>
+            monthView < 12
+              ? setMonthView(monthView + 1)
+              : setMonthView(monthView)
+          }
+        >
+          <MdKeyboardArrowRight />
+        </button>
+      </div>
+      <TransactionHistoryTotal />
       {Object.entries(dailyTransactions)
         .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
         .map(([date, transactions]) => {
