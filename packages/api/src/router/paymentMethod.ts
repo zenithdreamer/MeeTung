@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 import { prisma } from "@mee-tung/db";
 import { CreatePaymentMethodSchema } from "@mee-tung/validators";
@@ -30,6 +31,27 @@ export const paymentMethodRouter = {
 
     return paymentMethods;
   }),
+
+  getTypeById: protectedProcedure
+    .input(z.string().min(1))
+    .query(async ({ input }) => {
+      try {
+        const paymentMethod = await prisma.paymentMethod.findUnique({
+          where: {
+            id: input, // Use the input directly
+          },
+        });
+
+        if (!paymentMethod) {
+          throw new Error(`Payment method with ID ${input} not found.`);
+        }
+
+        return paymentMethod;
+      } catch (error) {
+        console.error("Error fetching payment method:", error);
+        throw new Error("Could not retrieve payment method.");
+      }
+    }),
 
   deleteType: protectedProcedure.query(async ({ input }) => {
     const id = input;
