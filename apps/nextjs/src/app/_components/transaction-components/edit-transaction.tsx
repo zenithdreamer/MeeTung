@@ -201,13 +201,13 @@ export function EditReceiptCategory({
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="rounded- bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-bold">Add Payment Method</h2>
+            <h2 className="mb-4 text-lg font-bold">Add Category</h2>
             <input
               type="text"
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               className="mb-4 w-full rounded border p-2"
-              placeholder="Enter payment method name"
+              placeholder="Enter category name"
             />
             <div className="flex justify-between">
               <button
