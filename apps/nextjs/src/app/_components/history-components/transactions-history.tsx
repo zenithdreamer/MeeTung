@@ -1,40 +1,58 @@
 "use client";
 
 import { useState } from "react";
+import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLeft";
+import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
 
-export interface Transaction {
-  date: Date;
-  amount: number;
-  paymentMethod: string | undefined;
-  title: string | undefined;
-  type: string; //expense or income
-}
+import { api } from "~/trpc/react";
 
-export interface DailyHistory {
-  date: Date;
-  transactions: [t: Transaction];
-}
+const months = {
+  1: "January",
+  2: "February",
+  3: "March",
+  4: "April",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "August",
+  9: "September",
+  10: "October",
+  11: "November",
+  12: "December",
+};
 
-export interface WeeklyHistory {
-  week: [startDate: Date, endDate: Date];
-  t: Transaction;
-}
+const curDate = new Date();
+const curMonth = curDate.getMonth() + 1;
+const curYear = curDate.getFullYear();
 
 export function TransactionHistory() {
   const [view, setView] = useState("daily");
+  const [monthView, setMonthView] = useState(curMonth); // Initialize with current month
+  const [yearView, setYearView] = useState(curYear); // Initialize with current year
+
   const renderTransactionHistory = () => {
     switch (view) {
       case "daily":
-        return <DailyTransactionHistory />;
+        return (
+          <DailyTransactionHistory monthView={monthView} yearView={yearView} />
+        );
       case "monthly":
         return <MonthlyTransactionHistory />;
       // case "summary":
       //   return <TransactionHistorySummary />;
     }
   };
+
   return (
     <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
-      <TransactionHistoryNav changeView={setView} view={view} />
+      <TransactionHistoryNav
+        changeView={setView}
+        view={view}
+        monthView={monthView}
+        setMonthView={setMonthView}
+        yearView={yearView}
+        setYearView={setYearView}
+      />
       <TransactionHistoryTotal />
       {renderTransactionHistory()}
     </div>
@@ -44,9 +62,15 @@ export function TransactionHistory() {
 export function TransactionHistoryNav({
   changeView,
   view,
+  monthView,
+  setMonthView,
 }: {
   changeView: (view: string) => void;
   view: string;
+  monthView: number;
+  setMonthView: (month: number) => void;
+  yearView: number;
+  setYearView: (year: number) => void;
 }) {
   return (
     <div className="flex flex-col">
@@ -69,6 +93,31 @@ export function TransactionHistoryNav({
         >
           Summary
         </button> */}
+      </div>
+      <div className="flex flex-row p-4">
+        <button
+          className="border-1 m-auto h-fit w-fit p-1"
+          onClick={() =>
+            monthView > 1
+              ? setMonthView(monthView - 1)
+              : setMonthView(monthView)
+          }
+        >
+          <MdKeyboardArrowLeft />
+        </button>
+        <div className="text-center text-sm font-semibold md:text-3xl xl:text-4xl">
+          {months[monthView]}
+        </div>
+        <button
+          className="border-1 m-auto h-fit w-fit p-1"
+          onClick={() =>
+            monthView < 12
+              ? setMonthView(monthView + 1)
+              : setMonthView(monthView)
+          }
+        >
+          <MdKeyboardArrowRight />
+        </button>
       </div>
     </div>
   );
@@ -96,33 +145,48 @@ export function TransactionHistoryTotal() {
   );
 }
 
-export function DailyTransactionHistory() {
-  //use DailyTransactions interface to keep all transactions from each date
-  const transactionExample: Transaction = {
-    date: new Date("2023-09-25"),
-    amount: 150.75,
-    paymentMethod: "Cash",
-    title: "Groceries",
-    type: "expense",
-  };
+export function DailyTransactionHistory({ monthView, yearView }) {
+  const {
+    data: dailyTransactions,
+    isLoading,
+    isError,
+  } = api.transaction.getTransactionsByMonth.useQuery({
+    month: monthView,
+    year: yearView,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error fetching transactions.</div>;
+  }
+
+  if (dailyTransactions) {
+    console.log("test", Object.entries(dailyTransactions));
+  } else {
+    console.error("dailyTransactions is undefined");
+  }
 
   return (
-    <div className="flex flex-col">
-      <div className="py-2">
-        <div className="text-2xl font-semibold">
-          {transactionExample.date
-            .toUTCString()
-            .split(" ")
-            .slice(0, 3)
-            .join(" ")}
-        </div>
-        <div className="flex flex-col gap-2 py-3">
-          <DailyTransaction t={transactionExample} />
-          <DailyTransaction t={transactionExample} />
-          <DailyTransaction t={transactionExample} />
-          {/* in the real thing have to loop through each day*/}
-        </div>
-      </div>
+    <div className="flex flex-col transition-all">
+      {Object.entries(dailyTransactions)
+        .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+        .map(([date, transactions]) => {
+          return (
+            <div key={date} className="py-2">
+              <div className="text-xl font-semibold">
+                {new Date(date).toUTCString().split(" ").slice(0, 3).join(" ")}
+              </div>
+              <div className="flex flex-col gap-2 py-3">
+                {transactions.map((transaction) => (
+                  <DailyTransaction key={transaction.id} t={transaction} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
     </div>
   );
 }
@@ -166,14 +230,31 @@ export function TransactionHistorySummary() {
   return <p>summary</p>;
 }
 
-export function DailyTransaction({ t }: { t: Transaction }) {
+export function DailyTransaction({ t }) {
   //displays information of a single transaction
+  const {
+    data: paymentMethod,
+    isLoading,
+    isError,
+  } = api.paymentmethod.getTypeById.useQuery(t.paymentMethodId);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error fetching transactions.</div>;
+  }
   return (
-    <div className="flex flex-col rounded-xl border bg-[#FEF8ED] p-4 md:text-2xl xl:text-3xl">
-      <div className="text-md font-medium">{t.title}</div>
+    <div className="border-1 flex flex-col rounded-xl border border-black bg-[#FEF8ED] p-4 md:text-2xl xl:text-3xl">
+      <div className="text-md font-medium">{t.description}</div>
       <div className="flex justify-between text-sm md:text-xl xl:text-2xl">
-        <div className="flex-1 text-left">{t.paymentMethod}</div>
-        <div className="flex-none text-right">{t.amount}</div>
+        <div className="flex-1 text-left">{paymentMethod.name}</div>
+        <div
+          className={`flex-none text-right ${t.amount > 0 ? "text-[#668329]" : "text-[#84342F]"}`}
+        >
+          {t.amount}
+        </div>
       </div>
     </div>
   );
