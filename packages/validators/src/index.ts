@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { date, z } from "zod";
 
 export const CreatePostSchema = z.object({
   title: z.string().min(1),
@@ -33,6 +33,7 @@ export const createTransactionSchema = z.object({
   description: z.string().min(1).optional(),
   categoryId: z.string().min(1),
   paymentMethodId: z.string().min(1),
+  createdAt: date(),
 });
 
 export const editTransactionSchema = z.object({

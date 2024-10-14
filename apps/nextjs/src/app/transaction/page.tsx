@@ -34,8 +34,7 @@ export default function HistoryPage() {
     setTransaction((prev) => ({ ...prev, [key]: value }));
   };
 
-  const createTransaction =
-    api.transaction.createTransactionSchema.useMutation();
+  const createTransaction = api.transaction.create.useMutation();
   const { data: currentUser } = api.user.getCurrentUser.useQuery();
 
   const router = useRouter();
@@ -52,7 +51,7 @@ export default function HistoryPage() {
         categoryId: transaction.categoryId,
         paymentMethodId: transaction.paymentMethodId,
         description: transaction.description,
-        userId: currentUser.id,
+        createdAt: new Date(transaction.date),
       });
       toast("Transaction Added");
       router.push("/");
