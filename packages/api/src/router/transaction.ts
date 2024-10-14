@@ -79,8 +79,19 @@ export const transactionRouter = {
           },
         },
       });
+      console.log(transactions);
 
-      return transactions;
+      const transactionsByDate = {};
+      transactions.forEach((t) => {
+        const date = t.createdAt.toISOString().split("T")[0];
+
+        if (!transactionsByDate[date]) {
+          transactionsByDate[date] = [];
+        }
+
+        transactionsByDate[date].push(t);
+      });
+      return transactionsByDate;
     }),
 
   // Retrieve all transactions by a specific year
