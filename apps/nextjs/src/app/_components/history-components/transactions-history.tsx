@@ -200,7 +200,6 @@ export function DailyTransactionHistory({
         <TransactionHistoryTotal />
       </div>
 
-      {/* Scrollable transactions section */}
       <div className="flex-1 overflow-y-scroll">
         {Object.entries(dailyTransactions)
           .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
@@ -231,11 +230,13 @@ export function MonthlyTransactionHistory({ yearView, changeYearView }) {
   //get the weekly expenses in each month and store in WeeklyHistory
   return (
     <div className="flex flex-col">
-      <TransactionDateNav
-        state={yearView}
-        changeState={changeYearView}
-        type="year"
-      />
+      <div className="p-2">
+        <TransactionDateNav
+          state={yearView}
+          changeState={changeYearView}
+          type="year"
+        />
+      </div>
       {Object.entries(months).map(([index, month]) => (
         <div key={index} className="py-2">
           <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
