@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLeft";
 import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
 
@@ -54,7 +55,7 @@ export function TransactionHistory() {
   };
 
   return (
-    <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
+    <div className="flex h-screen max-w-full flex-col gap-2 overflow-hidden bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
       <TransactionHistoryNav view={view} changeView={setView} />
       {renderTransactionHistory()}
     </div>
@@ -219,7 +220,7 @@ export function DailyTransactionHistory({
         <TransactionHistoryTotal month={monthView} year={yearView} />
       </div>
 
-      <div className="flex-1 overflow-y-scroll">
+      <div className="mb-20 flex-1 overflow-y-scroll">
         {Object.entries(dailyTransactions)
           .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
           .map(([date, transactions]) => {
@@ -277,6 +278,11 @@ export function TransactionHistorySummary() {
 }
 
 export function DailyTransaction({ t }) {
+  const router = useRouter();
+  function handleClickTransaction(transactionId) {
+    console.log(transactionId);
+    router.push("transaction/edit/" + transactionId);
+  }
   //displays information of a single transaction
   const {
     data: paymentMethod,
@@ -292,7 +298,10 @@ export function DailyTransaction({ t }) {
     return <div>Error fetching transactions.</div>;
   }
   return (
-    <div className="border-1 flex flex-col rounded-xl border border-black bg-[#FEF8ED] p-4 md:text-2xl xl:text-3xl">
+    <div
+      onClick={() => handleClickTransaction(t.id)}
+      className="border-1 flex flex-col rounded-xl border border-black bg-[#FEF8ED] p-4 md:text-2xl xl:text-3xl"
+    >
       <div className="text-md font-medium">{t.description}</div>
       <div className="flex justify-between text-sm md:text-xl xl:text-2xl">
         <div className="flex-1 text-left">{paymentMethod.name}</div>

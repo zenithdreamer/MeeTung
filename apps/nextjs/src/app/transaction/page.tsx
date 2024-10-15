@@ -19,7 +19,7 @@ const getTodayDate = () => {
   return `${year}-${month}-${day}`;
 };
 
-export default function HistoryPage() {
+export default function CreateTransactionPage() {
   const [transaction, setTransaction] = useState({
     date: getTodayDate(),
     categoryId: "",
