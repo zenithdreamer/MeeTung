@@ -105,20 +105,84 @@ export const transactionRouter = {
       const userId = ctx.session.user.id;
       const { year } = input;
 
-      const startDate = new Date(year, 0, 1); // Start of the year
-      const endDate = new Date(year, 11, 31, 23, 59, 59, 999); // End of the year
+      const monthlyData = await Promise.all(
+        Array.from({ length: 12 }, async (_, month) => {
+          // Define the days for each week
+          const weekRanges = [
+            { start: 1, end: 7 }, // Week 1: Days 1-7
+            { start: 8, end: 14 }, // Week 2: Days 8-14
+            { start: 15, end: 21 }, // Week 3: Days 15-21
+            { start: 22, end: 31 }, // Week 4: Days 22-31 (handle end of month)
+          ];
 
-      const transactions = await prisma.transaction.findMany({
-        where: {
-          userId,
-          createdAt: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
-      });
+          const monthlyWeeksData = await Promise.all(
+            weekRanges.map(async ({ start, end }, weekIndex) => {
+              const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get total days in the month
+              const adjustedEnd = Math.min(end, daysInMonth); // Adjust end to not exceed total days
 
-      return transactions;
+              const startDate = new Date(year, month, start); // Start date for the week
+              const endDate = new Date(
+                year,
+                month,
+                adjustedEnd,
+                23,
+                59,
+                59,
+                999,
+              ); // End date for the week
+
+              const totalIncome = await prisma.transaction.aggregate({
+                _sum: {
+                  amount: true,
+                },
+                where: {
+                  userId: userId,
+                  createdAt: {
+                    gte: startDate,
+                    lte: endDate,
+                  },
+                  amount: {
+                    gt: 0,
+                  },
+                },
+              });
+
+              const totalExpense = await prisma.transaction.aggregate({
+                _sum: {
+                  amount: true,
+                },
+                where: {
+                  userId: userId,
+                  createdAt: {
+                    gte: startDate,
+                    lte: endDate,
+                  },
+                  amount: {
+                    lt: 0,
+                  },
+                },
+              });
+
+              const totalIncomeAmount = Number(totalIncome._sum.amount) || 0;
+              const totalExpenseAmount = Number(totalExpense._sum.amount) || 0;
+
+              return {
+                week: weekIndex + 1, // Week number (1-4)
+                income: totalIncomeAmount,
+                expense: totalExpenseAmount,
+                total: totalIncomeAmount + totalExpenseAmount,
+              };
+            }),
+          );
+
+          return {
+            month: month + 1, // Month number (1-12)
+            weeks: monthlyWeeksData,
+          };
+        }),
+      );
+
+      return monthlyData;
     }),
 
   // Retrieve total amount of all transactions
