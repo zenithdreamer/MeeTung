@@ -121,6 +121,22 @@ export const transactionRouter = {
       return transactions;
     }),
 
+  // Retrieve total amount of all transactions
+  getTransactionsTotal: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    const totalAmount = await prisma.transaction.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        userId,
+      },
+    });
+
+    return totalAmount._sum.amount || 0;
+  }),
+
   // Edit Transaction
   editTransaction: protectedProcedure
     .input(editTransactionSchema)
