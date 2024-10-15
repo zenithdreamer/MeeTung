@@ -231,11 +231,6 @@ export function EditReceiptCategory({
 }
 
 export function EditReceiptAmount({ amount, onAmountChange }) {
-  const handleChange = (e) => {
-    const value = Math.max(0, e.target.value);
-    onAmountChange(value);
-  };
-
   return (
     <div className="mx-auto flex h-64">
       <div className="flex w-full flex-row items-center justify-center">
@@ -243,7 +238,7 @@ export function EditReceiptAmount({ amount, onAmountChange }) {
           className="m-2 w-24 flex-1 rounded-xl p-2 shadow-lg"
           type="number"
           value={amount}
-          onChange={handleChange}
+          onChange={(e) => onAmountChange(Number(e.target.value))}
         />
       </div>
     </div>
