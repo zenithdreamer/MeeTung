@@ -182,36 +182,47 @@ export function DailyTransactionHistory({
   }
 
   return (
-    <div className="flex flex-col gap-2 transition-all">
-      <div className="flex flex-row justify-center p-2">
-        <TransactionDateNav
-          state={monthView}
-          changeState={changeMonthView}
-          type="month"
-        />
-        <TransactionDateNav
-          state={yearView}
-          changeState={changeYearView}
-          type="year"
-        />
+    <div className="flex h-full flex-col gap-2">
+      {/* Header and navigation section */}
+      <div className="flex flex-col gap-2 transition-all">
+        <div className="flex flex-row justify-center p-2">
+          <TransactionDateNav
+            state={monthView}
+            changeState={changeMonthView}
+            type="month"
+          />
+          <TransactionDateNav
+            state={yearView}
+            changeState={changeYearView}
+            type="year"
+          />
+        </div>
+        <TransactionHistoryTotal />
       </div>
-      <TransactionHistoryTotal />
-      {Object.entries(dailyTransactions)
-        .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
-        .map(([date, transactions]) => {
-          return (
-            <div key={date} className="py-2">
-              <div className="text-xl font-semibold">
-                {new Date(date).toUTCString().split(" ").slice(0, 3).join(" ")}
+
+      {/* Scrollable transactions section */}
+      <div className="flex-1 overflow-y-scroll">
+        {Object.entries(dailyTransactions)
+          .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+          .map(([date, transactions]) => {
+            return (
+              <div key={date} className="py-2">
+                <div className="text-xl font-semibold">
+                  {new Date(date)
+                    .toUTCString()
+                    .split(" ")
+                    .slice(0, 3)
+                    .join(" ")}
+                </div>
+                <div className="flex flex-col gap-2 py-3">
+                  {transactions.map((transaction) => (
+                    <DailyTransaction key={transaction.id} t={transaction} />
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-col gap-2 py-3">
-                {transactions.map((transaction) => (
-                  <DailyTransaction key={transaction.id} t={transaction} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+      </div>
     </div>
   );
 }
