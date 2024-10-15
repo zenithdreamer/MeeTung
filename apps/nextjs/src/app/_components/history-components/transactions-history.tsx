@@ -130,23 +130,43 @@ export function TransactionDateNav({ state, changeState, type }) {
   );
 }
 
-export function TransactionHistoryTotal() {
-  const totalIncome = 100.0;
-  const totalExpense = 200.0;
-  const total: number = totalExpense - totalIncome;
+export function TransactionHistoryTotal({ month, year }) {
+  const {
+    data: transactionsTotals,
+    isLoading,
+    isError,
+  } = api.transaction.getTransactionsTotalsByMonth.useQuery({
+    month: month,
+    year: year,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error fetching transactions.</div>;
+  }
+
   return (
     <div className="flex-rows flex max-w-full rounded-xl border border-black bg-[#BBA384] p-2">
       <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
         <div className="font-medium">Income</div>
-        <div className="text-[#FEF8ED]">{totalIncome.toFixed(2)}</div>
+        <div className="text-[#FEF8ED]">
+          {transactionsTotals?.income.toFixed(2)}
+        </div>
       </div>
       <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
         <div className="font-medium">Expense</div>
-        <div className="text-[#FEF8ED]">{totalExpense.toFixed(2)}</div>
+        <div className="text-[#FEF8ED]">
+          {transactionsTotals?.expense.toFixed(2)}
+        </div>
       </div>
       <div className="flex-1 flex-col text-center md:text-lg xl:text-xl">
         <div className="font-medium">Total</div>
-        <div className="text-[#FEF8ED]">{total.toFixed(2)}</div>
+        <div className="text-[#FEF8ED]">
+          {transactionsTotals?.total.toFixed(2)}
+        </div>
       </div>
     </div>
   );
@@ -196,7 +216,7 @@ export function DailyTransactionHistory({
             type="year"
           />
         </div>
-        <TransactionHistoryTotal />
+        <TransactionHistoryTotal month={monthView} year={yearView} />
       </div>
 
       <div className="flex-1 overflow-y-scroll">

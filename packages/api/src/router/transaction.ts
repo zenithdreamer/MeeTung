@@ -122,20 +122,59 @@ export const transactionRouter = {
     }),
 
   // Retrieve total amount of all transactions
-  getTransactionsTotal: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
+  getTransactionsTotalsByMonth: protectedProcedure
+    .input(
+      z.object({
+        month: z.number().min(1).max(12),
+        year: z.number().min(1900).max(new Date().getFullYear()),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id;
+      const { month, year } = input;
 
-    const totalAmount = await prisma.transaction.aggregate({
-      _sum: {
-        amount: true,
-      },
-      where: {
-        userId,
-      },
-    });
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0, 23, 59, 59, 999);
 
-    return totalAmount._sum.amount || 0;
-  }),
+      const totalIncome = await prisma.transaction.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          userId: userId,
+          createdAt: {
+            gte: startDate,
+            lte: endDate,
+          },
+          amount: {
+            gt: 0,
+          },
+        },
+      });
+
+      const totalExpense = await prisma.transaction.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          userId: userId,
+          amount: {
+            lt: 0,
+          },
+        },
+      });
+
+      const totalIncomeAmount = Number(totalIncome._sum.amount) || 0;
+      const totalExpenseAmount = Number(totalExpense._sum.amount) || 0;
+
+      const data = {
+        income: totalIncomeAmount,
+        expense: totalExpenseAmount,
+        total: Number(totalIncomeAmount) + Number(totalExpenseAmount),
+      };
+
+      return data;
+    }),
 
   // Edit Transaction
   editTransaction: protectedProcedure
