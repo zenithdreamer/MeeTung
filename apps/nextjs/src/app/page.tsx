@@ -32,21 +32,12 @@ export default function HistoryPage() {
       <HistoryPageNavBar />
       <TransactionHistory />
       <CreateTransactionButton />
-      {typeof window !== "undefined" && localStorage.getItem("token") ? (
-        <button
-          className="absolute bottom-6 left-4 rounded-2xl p-4 text-white md:text-lg"
-          onClick={handleLogout}
-        >
-          <RiLogoutBoxLine color="#664F3D" size="34px" />
-        </button>
-      ) : (
-        <button
-          onClick={() => router.push("/login")}
-          className="rounded-xl bg-green-600 px-4 py-2 text-white shadow md:text-lg"
-        >
-          Login
-        </button>
-      )}
+      <button
+        className="absolute bottom-6 left-4 rounded-2xl p-4 text-white md:text-lg"
+        onClick={handleLogout}
+      >
+        <RiLogoutBoxLine color="#664F3D" size="34px" />
+      </button>
     </div>
   );
 }
