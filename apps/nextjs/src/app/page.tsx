@@ -9,8 +9,9 @@ import { api } from "~/trpc/react";
 import { CreateTransactionButton } from "./_components/history-components/create-transaction";
 import { HistoryPageNavBar } from "./_components/history-components/navbar";
 import { TransactionHistory } from "./_components/history-components/transactions-history";
+import withAuthGuard from "./_components/hoc/authguard";
 
-export default function HistoryPage() {
+function HistoryPage() {
   const router = useRouter();
   const logout = api.auth.logout.useMutation();
 
@@ -41,3 +42,5 @@ export default function HistoryPage() {
     </div>
   );
 }
+
+export default withAuthGuard(HistoryPage);
