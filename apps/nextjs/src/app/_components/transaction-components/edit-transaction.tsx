@@ -262,7 +262,7 @@ export function EditReceiptPayMethod({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMethodName, setNewMethodName] = useState("");
 
-  const createPaymentMethodMutation = api.paymentmethod.craeteType.useMutation({
+  const createPaymentMethodMutation = api.paymentmethod.createType.useMutation({
     onSuccess: () => {
       refetch();
     },

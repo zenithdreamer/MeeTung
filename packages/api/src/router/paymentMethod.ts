@@ -7,7 +7,7 @@ import { CreatePaymentMethodSchema } from "@mee-tung/validators";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const paymentMethodRouter = {
-  craeteType: publicProcedure
+  createType: publicProcedure
     .input(CreatePaymentMethodSchema)
     .mutation(async ({ input }) => {
       const { name, userId } = input;
