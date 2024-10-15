@@ -27,13 +27,27 @@ const curYear = curDate.getFullYear();
 
 export function TransactionHistory() {
   const [view, setView] = useState("daily");
+  const [monthView, setMonthView] = useState(curMonth);
+  const [yearView, setYearView] = useState(curYear);
 
   const renderTransactionHistory = () => {
     switch (view) {
       case "daily":
-        return <DailyTransactionHistory />;
+        return (
+          <DailyTransactionHistory
+            monthView={monthView}
+            changeMonthView={setMonthView}
+            yearView={yearView}
+            changeYearView={setYearView}
+          />
+        );
       case "monthly":
-        return <MonthlyTransactionHistory />;
+        return (
+          <MonthlyTransactionHistory
+            yearView={yearView}
+            changeYearView={setYearView}
+          />
+        );
       // case "summary":
       //   return <TransactionHistorySummary />;
     }
@@ -41,15 +55,15 @@ export function TransactionHistory() {
 
   return (
     <div className="flex h-screen max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
-      <TransactionHistoryNav changeView={setView} view={view} />
+      <TransactionHistoryNav view={view} changeView={setView} />
       {renderTransactionHistory()}
     </div>
   );
 }
 
 export function TransactionHistoryNav({
-  changeView,
   view,
+  changeView,
 }: {
   changeView: (view: string) => void;
   view: string;
@@ -84,6 +98,38 @@ export function TransactionHistoryNav({
   );
 }
 
+export function TransactionDateNav({ state, changeState, type }) {
+  let min = 1900;
+  let max = curYear;
+  if (type === "month") {
+    min = 1;
+    max = 12;
+  }
+  return (
+    <div className="flex flex-row">
+      <button
+        className="border-1 m-auto h-fit w-fit justify-end p-1"
+        onClick={() =>
+          state > min ? changeState(state - 1) : changeState(state)
+        }
+      >
+        <MdKeyboardArrowLeft size="20px" />
+      </button>
+      <div className="justify-center p-1 text-center text-sm font-semibold md:text-lg xl:text-xl">
+        {type === "month" ? months[state] : state}
+      </div>
+      <button
+        className="border-1 m-auto h-fit w-fit justify-start p-1"
+        onClick={() =>
+          state < max ? changeState(state + 1) : changeState(state)
+        }
+      >
+        <MdKeyboardArrowRight size="20px" />
+      </button>
+    </div>
+  );
+}
+
 export function TransactionHistoryTotal() {
   const totalIncome = 100.0;
   const totalExpense = 200.0;
@@ -106,10 +152,12 @@ export function TransactionHistoryTotal() {
   );
 }
 
-export function DailyTransactionHistory() {
-  const [monthView, setMonthView] = useState(curMonth); // Initialize with current month
-  const [yearView, setYearView] = useState(curYear); // Initialize with current year
-
+export function DailyTransactionHistory({
+  monthView,
+  changeMonthView,
+  yearView,
+  changeYearView,
+}) {
   const {
     data: dailyTransactions,
     isLoading,
@@ -134,31 +182,18 @@ export function DailyTransactionHistory() {
   }
 
   return (
-    <div className="flex flex-col transition-all">
-      <div className="flex flex-row p-4">
-        <button
-          className="border-1 m-auto h-fit w-fit p-1"
-          onClick={() =>
-            monthView > 1
-              ? setMonthView(monthView - 1)
-              : setMonthView(monthView)
-          }
-        >
-          <MdKeyboardArrowLeft />
-        </button>
-        <div className="text-center text-sm font-semibold md:text-3xl xl:text-4xl">
-          {months[monthView]}
-        </div>
-        <button
-          className="border-1 m-auto h-fit w-fit p-1"
-          onClick={() =>
-            monthView < 12
-              ? setMonthView(monthView + 1)
-              : setMonthView(monthView)
-          }
-        >
-          <MdKeyboardArrowRight />
-        </button>
+    <div className="flex flex-col gap-2 transition-all">
+      <div className="flex flex-row justify-center p-2">
+        <TransactionDateNav
+          state={monthView}
+          changeState={changeMonthView}
+          type="month"
+        />
+        <TransactionDateNav
+          state={yearView}
+          changeState={changeYearView}
+          type="year"
+        />
       </div>
       <TransactionHistoryTotal />
       {Object.entries(dailyTransactions)
@@ -181,33 +216,22 @@ export function DailyTransactionHistory() {
   );
 }
 
-export function MonthlyTransactionHistory() {
-  const monthlyTransactions: string[] = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
+export function MonthlyTransactionHistory({ yearView, changeYearView }) {
   //get the weekly expenses in each month and store in WeeklyHistory
   return (
     <div className="flex flex-col">
-      {monthlyTransactions.map((month, index) => (
+      <TransactionDateNav
+        state={yearView}
+        changeState={changeYearView}
+        type="year"
+      />
+      {Object.entries(months).map(([index, month]) => (
         <div key={index} className="py-2">
           <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
             {month}
           </div>
           <div className="flex flex-col gap-2 py-3">
             <MonthlyTransaction />
-            {/* in the real thing have to loop */}
           </div>
         </div>
       ))}

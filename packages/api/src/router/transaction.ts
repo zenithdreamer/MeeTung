@@ -81,17 +81,17 @@ export const transactionRouter = {
       });
       console.log(transactions);
 
-      const transactionsByDate = {};
+      const transactionsByMonth = {};
       transactions.forEach((t) => {
         const date = t.createdAt.toISOString().split("T")[0];
 
-        if (!transactionsByDate[date]) {
-          transactionsByDate[date] = [];
+        if (!transactionsByMonth[date]) {
+          transactionsByMonth[date] = [];
         }
 
-        transactionsByDate[date].push(t);
+        transactionsByMonth[date].push(t);
       });
-      return transactionsByDate;
+      return transactionsByMonth;
     }),
 
   // Retrieve all transactions by a specific year

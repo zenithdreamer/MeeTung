@@ -9,9 +9,11 @@ import { toast } from "@mee-tung/ui/toast";
 
 import { api } from "~/trpc/react";
 
-const curYear = new Date().getFullYear();
+const curDate = new Date();
+const curYear = curDate.getFullYear();
+const curMonth = curDate.getMonth();
 
-export function MonthBackButton({
+export function YearBackButton({
   year,
   setYear,
 }: {
@@ -28,7 +30,7 @@ export function MonthBackButton({
   );
 }
 
-export function MonthNextButton({
+export function YearNextButton({
   year,
   setYear,
 }: {
@@ -55,6 +57,7 @@ export function YearLabel(props: { year?: number }) {
 
 export function HistoryPageNavBar() {
   const [year, setYear] = useState(curYear);
+  const [month, setMonth] = useState(curMonth);
   const router = useRouter();
   const logout = api.auth.logout.useMutation();
 
@@ -74,14 +77,18 @@ export function HistoryPageNavBar() {
   return (
     <div className="absolute w-full border-b-2 border-b-gray-500 bg-[#E9C1C9] p-10 transition-all md:p-9 xl:p-8">
       <div className="flex flex-row justify-center gap-20 align-middle">
-        <MonthBackButton year={year} setYear={setYear} />
+        {/* <YearBackButton year={year} setYear={setYear} />
         <div className="flex flex-col">
           <div className="text-center text-2xl font-bold text-[#F7EDDE] md:text-4xl xl:text-5xl">
             History
           </div>
           <YearLabel year={year} />
         </div>
-        <MonthNextButton year={year} setYear={setYear} />
+        <YearNextButton year={year} setYear={setYear} /> */}
+
+        <div className="text-center text-2xl font-bold text-[#F7EDDE] md:text-4xl xl:text-5xl">
+          History
+        </div>
       </div>
     </div>
   );
