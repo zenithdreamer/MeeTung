@@ -183,7 +183,6 @@ export function DailyTransactionHistory({
 
   return (
     <div className="flex h-full flex-col gap-2">
-      {/* Header and navigation section */}
       <div className="flex flex-col gap-2 transition-all">
         <div className="flex flex-row justify-center p-2">
           <TransactionDateNav
@@ -227,9 +226,8 @@ export function DailyTransactionHistory({
 }
 
 export function MonthlyTransactionHistory({ yearView, changeYearView }) {
-  //get the weekly expenses in each month and store in WeeklyHistory
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full flex-col">
       <div className="p-2">
         <TransactionDateNav
           state={yearView}
@@ -237,16 +235,18 @@ export function MonthlyTransactionHistory({ yearView, changeYearView }) {
           type="year"
         />
       </div>
-      {Object.entries(months).map(([index, month]) => (
-        <div key={index} className="py-2">
-          <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
-            {month}
+      <div className="flex-1 overflow-x-hidden overflow-y-scroll">
+        {Object.entries(months).map(([index, month]) => (
+          <div key={index} className="py-2">
+            <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
+              {month}
+            </div>
+            <div className="flex flex-col gap-2 py-3">
+              <MonthlyTransaction />
+            </div>
           </div>
-          <div className="flex flex-col gap-2 py-3">
-            <MonthlyTransaction />
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
