@@ -29,6 +29,31 @@ export const transactionRouter = {
 
       return transaction;
     }),
+  getTransactionById: protectedProcedure
+    .input(
+      z.object({
+        transactionId: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { transactionId } = input;
+      const userId = ctx.session.user.id;
+      const transaction = await prisma.transaction.findUnique({
+        where: {
+          userId,
+          id: transactionId,
+        },
+      });
+
+      if (!transaction) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "transaction not found.",
+        });
+      }
+
+      return transaction;
+    }),
 
   // Retrieve all transactions by a specific day
   getTransactionsByDay: protectedProcedure
