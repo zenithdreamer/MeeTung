@@ -9,7 +9,7 @@ import type { Transaction } from "@mee-tung/db";
 
 import { api } from "~/trpc/react";
 
-const months = {
+const months: Record<number, string> = {
   1: "January",
   2: "February",
   3: "March",
@@ -58,7 +58,18 @@ export function TransactionHistory() {
 
   return (
     <div className="flex h-screen max-w-full flex-col gap-2 overflow-hidden bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all dark:text-black md:pt-40 xl:pt-44">
-      <TransactionHistoryNav view={view} changeView={setView} />
+      <TransactionHistoryNav
+        view={view}
+        changeView={setView}
+        monthView={0}
+        setMonthView={function (_month: number): void {
+          return;
+        }}
+        yearView={0}
+        setYearView={function (_year: number): void {
+          return;
+        }}
+      />
       {renderTransactionHistory()}
     </div>
   );
@@ -101,7 +112,15 @@ export function TransactionHistoryNav({
   );
 }
 
-export function TransactionDateNav({ state, changeState, type }) {
+export function TransactionDateNav({
+  state,
+  changeState,
+  type,
+}: {
+  state: number;
+  changeState: (state: number) => void;
+  type: "month" | "year";
+}) {
   let min = 1900;
   let max = curYear;
   if (type === "month") {
@@ -133,7 +152,13 @@ export function TransactionDateNav({ state, changeState, type }) {
   );
 }
 
-export function TransactionHistoryTotal({ month, year }) {
+export function TransactionHistoryTotal({
+  month,
+  year,
+}: {
+  month: number;
+  year: number;
+}) {
   const {
     data: transactionsTotals,
     isLoading,
@@ -180,6 +205,11 @@ export function DailyTransactionHistory({
   changeMonthView,
   yearView,
   changeYearView,
+}: {
+  monthView: number;
+  changeMonthView: (month: number) => void;
+  yearView: number;
+  changeYearView: (year: number) => void;
 }) {
   const {
     data: dailyTransactions,
@@ -216,32 +246,42 @@ export function DailyTransactionHistory({
       </div>
 
       <div className="mb-20 flex-1 overflow-x-hidden overflow-y-scroll p-2">
-        {Object.entries(dailyTransactions)
-          .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
-          .map(([date, transactions]) => {
-            return (
-              <div key={date} className="py-2">
-                <div className="text-xl font-semibold">
-                  {new Date(date)
-                    .toUTCString()
-                    .split(" ")
-                    .slice(0, 3)
-                    .join(" ")}
+        {dailyTransactions &&
+          Object.entries(dailyTransactions)
+            .sort(
+              ([dateA], [dateB]) =>
+                new Date(dateA).getTime() - new Date(dateB).getTime(),
+            )
+            .map(([date, transactions]) => {
+              return (
+                <div key={date} className="py-2">
+                  <div className="text-xl font-semibold">
+                    {new Date(date)
+                      .toUTCString()
+                      .split(" ")
+                      .slice(0, 3)
+                      .join(" ")}
+                  </div>
+                  <div className="flex flex-col gap-2 py-3">
+                    {transactions.map((transaction) => (
+                      <DailyTransaction key={transaction.id} t={transaction} />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2 py-3">
-                  {transactions.map((transaction) => (
-                    <DailyTransaction key={transaction.id} t={transaction} />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
       </div>
     </div>
   );
 }
 
-export function MonthlyTransactionHistory({ yearView, changeYearView }) {
+export function MonthlyTransactionHistory({
+  yearView,
+  changeYearView,
+}: {
+  yearView: number;
+  changeYearView: (year: number) => void;
+}) {
   const {
     data: getMonthlyTransaction,
     isLoading,
@@ -268,18 +308,19 @@ export function MonthlyTransactionHistory({ yearView, changeYearView }) {
         />
       </div>
       <div className="mb-20 flex-1 overflow-x-hidden overflow-y-scroll p-2">
-        {Object.entries(getMonthlyTransaction).map(([index, month]) => (
-          <div key={index}>
-            <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
-              {months[Number(index) + 1]}
-            </div>
-            <div className="py-2">
-              <div className="flex flex-col gap-2 py-3">
-                <MonthlyTransaction weeks={month.weeks} />
+        {getMonthlyTransaction &&
+          Object.entries(getMonthlyTransaction).map(([index, month]) => (
+            <div key={index}>
+              <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
+                {months[Number(index) + 1]}
+              </div>
+              <div className="py-2">
+                <div className="flex flex-col gap-2 py-3">
+                  <MonthlyTransaction weeks={month.weeks} />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
@@ -292,7 +333,7 @@ export function TransactionHistorySummary() {
 
 export function DailyTransaction({ t }: { t: Transaction }) {
   const router = useRouter();
-  function handleClickTransaction(transactionId) {
+  function handleClickTransaction(transactionId: string) {
     router.push("transaction/edit/" + transactionId);
   }
   //displays information of a single transaction
@@ -300,7 +341,7 @@ export function DailyTransaction({ t }: { t: Transaction }) {
     data: paymentMethod,
     isLoading,
     isError,
-  } = api.paymentmethod.getTypeById.useQuery({ id: t.paymentMethodId });
+  } = api.paymentmethod.getTypeById.useQuery({ id: t.paymentMethodId ?? "" });
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -318,7 +359,9 @@ export function DailyTransaction({ t }: { t: Transaction }) {
     >
       <div className="text-md font-medium">{t.description}</div>
       <div className="flex justify-between text-sm md:text-xl xl:text-2xl">
-        <div className="flex-1 text-left">{paymentMethod.name}</div>
+        <div className="flex-1 text-left">
+          {paymentMethod?.name ?? "Unknown"}
+        </div>
         <div
           className={`flex-none text-right ${amount > 0 ? "text-[#668329]" : "text-[#84342F]"}`}
         >
@@ -329,7 +372,11 @@ export function DailyTransaction({ t }: { t: Transaction }) {
   );
 }
 
-export function MonthlyTransaction({ weeks }) {
+export function MonthlyTransaction({
+  weeks,
+}: {
+  weeks: { week: number; total: number }[];
+}) {
   console.log("weeks", weeks[0]);
   return (
     <div className="flex flex-col rounded-xl">
@@ -337,10 +384,10 @@ export function MonthlyTransaction({ weeks }) {
         <div className="flex flex-1 text-center text-[#FEF8ED]"></div>
         <div className=" text-[#FEF8ED]">Total</div>
       </div>
-      <WeeklyTransaction week={weeks[0]} isLast={false} />
-      <WeeklyTransaction week={weeks[1]} isLast={false} />
-      <WeeklyTransaction week={weeks[2]} isLast={false} />
-      <WeeklyTransaction week={weeks[3]} isLast={true} />
+      {weeks[0] && <WeeklyTransaction week={weeks[0]} isLast={false} />}
+      {weeks[1] && <WeeklyTransaction week={weeks[1]} isLast={false} />}
+      {weeks[2] && <WeeklyTransaction week={weeks[2]} isLast={false} />}
+      {weeks[3] && <WeeklyTransaction week={weeks[3]} isLast={true} />}
     </div>
   );
 }
@@ -350,7 +397,7 @@ export function WeeklyTransaction({
   week,
 }: {
   isLast: boolean;
-  week: (string | number)[];
+  week: { week: number; total: number };
 }) {
   console.log("small week", week);
   return (

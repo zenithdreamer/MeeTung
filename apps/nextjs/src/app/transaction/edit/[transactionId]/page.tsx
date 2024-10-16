@@ -41,12 +41,25 @@ export default function EditTransactionPage({
   const [category, setCategory] = useState(null);
   const [payment, setPayment] = useState(null);
 
+  if (isLoading) {
+    return <div>Loading...</div>; // Display loading state
+  }
+
+  if (isError) {
+    return <div>Error fetching transaction.</div>;
+  }
+
+  // Check if transaction is null
+  if (!transaction) {
+    return <div>No transaction found.</div>; // Handle case where transaction is not set
+  }
+
   useEffect(() => {
     if (getTransaction) {
       setTransaction({
         date: getDateString(getTransaction.createdAt),
         categoryId: getTransaction.categoryId,
-        category: categoryry?.name || "", // Assuming you want to set this later
+        category: categoryry.name || "", // Assuming you want to set this later
         amount: getTransaction.amount,
         paymentMethodId: getTransaction.paymentMethodId,
         payment: paymentt ? paymentt.name : "", // Assuming you want to set this later
@@ -121,19 +134,6 @@ export default function EditTransactionPage({
       setIsEditing(false);
     }
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>; // Display loading state
-  }
-
-  if (isError) {
-    return <div>Error fetching transaction.</div>;
-  }
-
-  // Check if transaction is null
-  if (!transaction) {
-    return <div>No transaction found.</div>; // Handle case where transaction is not set
-  }
 
   // Log the current transaction state before rendering
   console.log("Current Transaction State:", transaction);

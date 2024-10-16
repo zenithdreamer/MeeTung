@@ -85,6 +85,13 @@ export function EditReceiptDate({
   );
 }
 
+interface EditReceiptCategoryProps {
+  selectedCategory: string;
+  selectedCategoryId: string;
+  onCategoryChange: (name: string) => void;
+  onCategoryIdChange: (id: string) => void;
+}
+
 export function EditReceiptCategory({
   selectedCategory,
   selectedCategoryId,
@@ -259,6 +266,13 @@ export function EditReceiptAmount({
       </div>
     </div>
   );
+}
+
+interface EditReceiptPayMethodProps {
+  selectedMethod: string;
+  selectedMethodName: string;
+  onMethodChange: (id: string) => void;
+  onMethodNameChange: (name: string) => void;
 }
 
 export function EditReceiptPayMethod({
@@ -522,7 +536,9 @@ export function EditTransaction({
       {step === 2 && (
         <EditReceiptAmount
           amount={transaction.amount}
-          onAmountChange={(value) => onTransactionChange("amount", value)}
+          onAmountChange={(value: string | number) =>
+            onTransactionChange("amount", value)
+          }
         />
       )}
       {step === 3 && (
