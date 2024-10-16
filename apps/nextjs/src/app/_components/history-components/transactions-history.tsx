@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLeft";
 import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
 
+import type { Transaction } from "@mee-tung/db";
+
 import { api } from "~/trpc/react";
 
 const months = {
@@ -288,7 +290,7 @@ export function TransactionHistorySummary() {
   return <p>summary</p>;
 }
 
-export function DailyTransaction({ t }) {
+export function DailyTransaction({ t }: { t: Transaction }) {
   const router = useRouter();
   function handleClickTransaction(transactionId) {
     router.push("transaction/edit/" + transactionId);
