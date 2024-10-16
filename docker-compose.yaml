@@ -13,8 +13,10 @@ services:
       - "51332:5432"
     networks:
       - meetung_backend
-  meetung:
-    image: ghcr.io/zenthaidev/meetung:latest-dev
+  meetung-backend:
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@postgres-meetung:5432/MeeTung?schema=public&sslmode=disable&pgbouncer=false"
       AUTH_SECRET: "secret"
@@ -24,6 +26,20 @@ services:
       - "3001:3000"
     networks:
       - meetung_backend
+  meetung-frontend:
+    build:
+      context: .
+      dockerfile: ./apps/nextjs/Dockerfile
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres-meetung:5432/MeeTung?schema=public&sslmode=disable&pgbouncer=false"
+      AUTH_SECRET: "secret"
+      AUTH_DISCORD_ID: "secret"
+      AUTH_DISCORD_SECRET: "secret"
+    ports:
+      - "8080:3000"
+    networks:
+      - meetung_backend
+
 volumes:
   postgres_data:
 
