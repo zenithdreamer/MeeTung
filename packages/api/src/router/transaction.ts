@@ -250,6 +250,10 @@ export const transactionRouter = {
         },
         where: {
           userId: userId,
+          createdAt: {
+            gte: startDate,
+            lte: endDate,
+          },
           amount: {
             lt: 0,
           },
