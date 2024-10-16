@@ -11,14 +11,18 @@ import { TransactionNav } from "~/app/_components/transaction-components/transac
 import { api } from "~/trpc/react";
 
 // Function to convert Date to String
-export function getDateString(date) {
+export function getDateString(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
-export default function EditTransactionPage({ params }) {
+export default function EditTransactionPage({
+  params,
+}: {
+  params: { transactionId: string };
+}) {
   const router = useRouter();
   const { data: currentUser } = api.user.getCurrentUser.useQuery();
   const { transactionId } = params;
