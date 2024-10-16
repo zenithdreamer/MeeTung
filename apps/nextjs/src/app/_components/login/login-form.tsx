@@ -14,17 +14,20 @@ export function LoginForm() {
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    try {
+      if (!username || !password) {
+        return toast.error("Please fill in all fields");
+      } else {
+        const result = await login.mutateAsync({ username, password });
+        toast.success("Login successful");
+        localStorage.setItem("token", result.token);
 
-    if (!username || !password) {
-      return toast.error("Please fill in all fields");
-    } else {
-      const result = await login.mutateAsync({ username, password });
-      toast.success("Login successful");
-      localStorage.setItem("token", result.token);
-
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+      }
+    } catch (error) {
+      toast.error("Unable to Login");
     }
   };
 
