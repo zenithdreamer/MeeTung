@@ -33,17 +33,22 @@ export const paymentMethodRouter = {
   }),
 
   getTypeById: protectedProcedure
-    .input(z.string().min(1))
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
     .query(async ({ input }) => {
+      const { id } = input;
       try {
         const paymentMethod = await prisma.paymentMethod.findUnique({
           where: {
-            id: input, // Use the input directly
+            id,
           },
         });
 
         if (!paymentMethod) {
-          throw new Error(`Payment method with ID ${input} not found.`);
+          throw new Error(`Payment method with ID ${id} not found.`);
         }
 
         return paymentMethod;

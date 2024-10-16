@@ -307,6 +307,8 @@ export function DailyTransaction({ t }) {
   if (isError) {
     return <div>Error fetching transactions.</div>;
   }
+
+  const amount = Number(t.amount);
   return (
     <div
       onClick={() => handleClickTransaction(t.id)}
@@ -316,9 +318,9 @@ export function DailyTransaction({ t }) {
       <div className="flex justify-between text-sm md:text-xl xl:text-2xl">
         <div className="flex-1 text-left">{paymentMethod.name}</div>
         <div
-          className={`flex-none text-right ${t.amount > 0 ? "text-[#668329]" : "text-[#84342F]"}`}
+          className={`flex-none text-right ${amount > 0 ? "text-[#668329]" : "text-[#84342F]"}`}
         >
-          {t.amount}
+          {amount.toFixed(2)}
         </div>
       </div>
     </div>

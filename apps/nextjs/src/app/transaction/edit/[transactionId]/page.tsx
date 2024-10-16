@@ -34,20 +34,54 @@ export default function EditTransactionPage({ params }) {
   } = api.transaction.getTransactionById.useQuery({ transactionId });
 
   const [transaction, setTransaction] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [payment, setPayment] = useState(null);
 
   useEffect(() => {
     if (getTransaction) {
       setTransaction({
         date: getDateString(getTransaction.createdAt),
         categoryId: getTransaction.categoryId,
-        category: "", // Assuming you want to set this later
+        category: categoryry?.name || "", // Assuming you want to set this later
         amount: getTransaction.amount,
         paymentMethodId: getTransaction.paymentMethodId,
-        payment: "", // Assuming you want to set this later
+        payment: paymentt ? paymentt.name : "", // Assuming you want to set this later
         description: getTransaction.description,
       });
     }
-  }, [getTransaction]);
+  }, [getTransaction, category, payment]);
+
+  const { data: categoryry } = api.category.getCategoryById.useQuery(
+    { id: getTransaction?.categoryId },
+    {
+      enabled: !!getTransaction,
+    },
+  );
+
+  const { data: paymentt } = api.paymentmethod.getTypeById.useQuery(
+    { id: getTransaction?.paymentMethodId },
+    {
+      enabled: !!getTransaction, // Only run the query if `getTransaction` is not null/undefined
+    },
+  );
+
+  useEffect(() => {
+    if (categoryry) {
+      console.log("hello", categoryry.name);
+      setCategory(categoryry.name);
+    }
+  }, [categoryry]);
+
+  useEffect(() => {
+    if (paymentt) {
+      console.log("hellojello", paymentt.name);
+      setPayment(paymentt.name);
+    }
+  }, [paymentt]);
+
+  if (getTransaction) {
+    console.log(getTransaction.categoryId);
+  }
 
   const editTransaction = api.transaction.editTransaction.useMutation();
   const [isEditing, setIsEditing] = useState(false);
