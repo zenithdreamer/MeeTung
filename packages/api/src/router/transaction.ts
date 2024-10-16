@@ -115,9 +115,6 @@ export const transactionRouter = {
           if (!transactionsByMonth[date]) {
             transactionsByMonth[date] = [];
           }
-          if (!transactionsByMonth[date]) {
-            transactionsByMonth[date] = [];
-          }
 
           transactionsByMonth[date]?.push(t);
         }
