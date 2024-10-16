@@ -300,7 +300,7 @@ export function DailyTransaction({ t }: { t: Transaction }) {
     data: paymentMethod,
     isLoading,
     isError,
-  } = api.paymentmethod.getTypeById.useQuery(t.paymentMethodId);
+  } = api.paymentmethod.getTypeById.useQuery({ id: t.paymentMethodId });
 
   if (isLoading) {
     return <div>Loading...</div>;
