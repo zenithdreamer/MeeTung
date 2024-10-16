@@ -1,10 +1,16 @@
-"use client";
+//"use client";
 
 import { useEffect, useState } from "react";
 
 import { api } from "~/trpc/react";
 
-export function EditReceiptDate({ date, onDateChange }) {
+export function EditReceiptDate({
+  date,
+  onDateChange,
+}: {
+  date: string;
+  onDateChange: (newDate: string) => void;
+}) {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -15,7 +21,7 @@ export function EditReceiptDate({ date, onDateChange }) {
   const [selectedMonth, setSelectedMonth] = useState(
     new Date(date).getMonth() + 1,
   );
-  const [days, setDays] = useState([]);
+  const [days, setDays] = useState<number[]>([]);
   const [selectedDay, setSelectedDay] = useState(new Date(date).getDate());
 
   useEffect(() => {
@@ -34,7 +40,7 @@ export function EditReceiptDate({ date, onDateChange }) {
     if (newDate !== date) {
       onDateChange(newDate);
     }
-  }, [selectedYear, selectedMonth, selectedDay]);
+  }, [selectedYear, selectedMonth, selectedDay, date, onDateChange]);
 
   return (
     <div className="mx-auto flex h-64">
@@ -84,6 +90,11 @@ export function EditReceiptCategory({
   selectedCategoryId,
   onCategoryChange,
   onCategoryIdChange,
+}: {
+  selectedCategory: string;
+  selectedCategoryId: string;
+  onCategoryChange: (name: string) => void;
+  onCategoryIdChange: (id: string) => void;
 }) {
   const { data: category = [], refetch } =
     api.category.getCategories.useQuery();
@@ -98,7 +109,7 @@ export function EditReceiptCategory({
 
   const createCategoryMutation = api.category.createCategory.useMutation({
     onSuccess: () => {
-      refetch();
+      void refetch();
     },
   });
 
@@ -114,7 +125,7 @@ export function EditReceiptCategory({
     }
   };
 
-  const handleCategoryData = (name, id) => {
+  const handleCategoryData = (name: string, id: string) => {
     onCategoryChange(name);
     onCategoryIdChange(id);
   };
@@ -137,7 +148,6 @@ export function EditReceiptCategory({
     try {
       await createCategoryMutation.mutateAsync({
         name: newCategoryName,
-        userId: currentUser.id,
       });
 
       setNewCategoryName("");
@@ -230,7 +240,13 @@ export function EditReceiptCategory({
   );
 }
 
-export function EditReceiptAmount({ amount, onAmountChange }) {
+export function EditReceiptAmount({
+  amount,
+  onAmountChange,
+}: {
+  amount: number;
+  onAmountChange: (value: number) => void;
+}) {
   return (
     <div className="mx-auto flex h-64">
       <div className="flex w-full flex-row items-center justify-center">
@@ -250,6 +266,11 @@ export function EditReceiptPayMethod({
   selectedMethodName,
   onMethodChange,
   onMethodNameChange,
+}: {
+  selectedMethod: string;
+  selectedMethodName: string;
+  onMethodChange: (id: string) => void;
+  onMethodNameChange: (name: string) => void;
 }) {
   const { data: paymentMethods = [], refetch } =
     api.paymentmethod.getTypes.useQuery();
@@ -264,7 +285,7 @@ export function EditReceiptPayMethod({
 
   const createPaymentMethodMutation = api.paymentmethod.createType.useMutation({
     onSuccess: () => {
-      refetch();
+      void refetch();
     },
   });
 
@@ -280,7 +301,7 @@ export function EditReceiptPayMethod({
     }
   };
 
-  const handlePaymentData = (name, id) => {
+  const handlePaymentData = (name: string, id: string) => {
     onMethodNameChange(name);
     onMethodChange(id);
   };
@@ -398,7 +419,13 @@ export function EditReceiptPayMethod({
   );
 }
 
-export function EditReceiptNote({ description, onNoteChange }) {
+export function EditReceiptNote({
+  description,
+  onNoteChange,
+}: {
+  description: string;
+  onNoteChange: (value: string) => void;
+}) {
   return (
     <div className="mx-auto flex h-64">
       <div className="flex w-full flex-row items-center justify-center">
@@ -413,7 +440,28 @@ export function EditReceiptNote({ description, onNoteChange }) {
   );
 }
 
-export function EditTransaction({ transaction, onTransactionChange }) {
+interface Transaction {
+  date: string;
+  category: string;
+  categoryId: string;
+  amount: number;
+  paymentMethodId: string;
+  payment: string;
+  description: string;
+}
+
+interface EditTransactionProps {
+  transaction: Transaction;
+  onTransactionChange: (
+    field: keyof Transaction,
+    value: string | number,
+  ) => void;
+}
+
+export function EditTransaction({
+  transaction,
+  onTransactionChange,
+}: EditTransactionProps) {
   const [step, setStep] = useState(0);
 
   const stepTitles = [
