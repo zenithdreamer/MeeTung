@@ -57,7 +57,7 @@ export function TransactionHistory() {
   };
 
   return (
-    <div className="flex h-screen max-w-full flex-col gap-2 overflow-hidden bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all md:pt-40 xl:pt-44">
+    <div className="flex h-screen max-w-full flex-col gap-2 overflow-hidden bg-gradient-to-b from-[#E9DDCD] to-[#E9C1C9] p-8 pt-36 transition-all dark:text-black md:pt-40 xl:pt-44">
       <TransactionHistoryNav view={view} changeView={setView} />
       {renderTransactionHistory()}
     </div>

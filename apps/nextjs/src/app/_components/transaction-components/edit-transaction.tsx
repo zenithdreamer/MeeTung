@@ -158,7 +158,7 @@ export function EditReceiptCategory({
         <button
           onClick={handlePrev}
           disabled={currentPage === 0}
-          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50 dark:text-black"
         >
           &lt;
         </button>
@@ -166,7 +166,7 @@ export function EditReceiptCategory({
           {displayedCategories.map((method, index) => (
             <div
               key={`${method.id}-${index}`}
-              className="flex items-center justify-between"
+              className="flex items-center justify-between dark:text-black"
             >
               <button
                 onClick={() => handleCategoryData(method.name, method.id)}
@@ -184,7 +184,7 @@ export function EditReceiptCategory({
 
           <button
             onClick={handleAddCategory}
-            className="w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+            className="w-36 rounded-2xl border-2  border-gray-700 bg-white p-6 shadow-lg dark:text-black"
           >
             +
           </button>
@@ -192,7 +192,7 @@ export function EditReceiptCategory({
         <button
           onClick={handleNext}
           disabled={currentPage === totalPages - 1}
-          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2  border-gray-700 bg-white text-2xl font-bold disabled:opacity-50 dark:text-black"
         >
           &gt;
         </button>
@@ -324,7 +324,7 @@ export function EditReceiptPayMethod({
         <button
           onClick={handlePrev}
           disabled={currentPage === 0}
-          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50 dark:text-black"
         >
           &lt;
         </button>
@@ -333,7 +333,7 @@ export function EditReceiptPayMethod({
           {displayedMethods.map((method, index) => (
             <div
               key={`${method.id}-${index}`}
-              className="flex items-center justify-between"
+              className="flex items-center justify-between dark:text-black"
             >
               <button
                 onClick={() => handlePaymentData(method.name, method.id)}
@@ -351,7 +351,7 @@ export function EditReceiptPayMethod({
 
           <button
             onClick={handleAddPaymentMethod}
-            className="w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg"
+            className="w-36 rounded-2xl border-2 border-gray-700 bg-white p-6 shadow-lg dark:text-black"
           >
             +
           </button>
@@ -360,7 +360,7 @@ export function EditReceiptPayMethod({
         <button
           onClick={handleNext}
           disabled={currentPage === totalPages - 1}
-          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50"
+          className="mx-4 mt-6 h-10 w-10 rounded-lg border-2 border-gray-700 bg-white text-2xl font-bold disabled:opacity-50 dark:text-black"
         >
           &gt;
         </button>
@@ -438,7 +438,7 @@ export function EditTransaction({ transaction, onTransactionChange }) {
         <div className="text-left text-xl font-bold text-[#000000]">
           {stepTitles[step]}
         </div>
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 dark:text-black">
           <button
             onClick={handlePrev}
             disabled={step === 0}
