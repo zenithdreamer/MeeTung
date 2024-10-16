@@ -195,13 +195,6 @@ export function DailyTransactionHistory({
   if (isError) {
     return <div>Error fetching transactions.</div>;
   }
-
-  if (dailyTransactions) {
-    console.log("test", Object.entries(dailyTransactions));
-  } else {
-    console.error("dailyTransactions is undefined");
-  }
-
   return (
     <div className="flex h-full flex-col gap-2">
       <div className="flex flex-col gap-2 transition-all">
@@ -220,7 +213,7 @@ export function DailyTransactionHistory({
         <TransactionHistoryTotal month={monthView} year={yearView} />
       </div>
 
-      <div className="mb-20 flex-1 overflow-y-scroll">
+      <div className="mb-20 flex-1 overflow-x-hidden overflow-y-scroll p-2">
         {Object.entries(dailyTransactions)
           .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
           .map(([date, transactions]) => {
@@ -247,6 +240,22 @@ export function DailyTransactionHistory({
 }
 
 export function MonthlyTransactionHistory({ yearView, changeYearView }) {
+  const {
+    data: getMonthlyTransaction,
+    isLoading,
+    isError,
+  } = api.transaction.getTransactionsByYear.useQuery({
+    year: yearView,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error fetching transactions.</div>;
+  }
+
   return (
     <div className="flex h-full flex-col">
       <div className="p-2">
@@ -256,14 +265,16 @@ export function MonthlyTransactionHistory({ yearView, changeYearView }) {
           type="year"
         />
       </div>
-      <div className="flex-1 overflow-x-hidden overflow-y-scroll">
-        {Object.entries(months).map(([index, month]) => (
-          <div key={index} className="py-2">
+      <div className="mb-20 flex-1 overflow-x-hidden overflow-y-scroll p-2">
+        {Object.entries(getMonthlyTransaction).map(([index, month]) => (
+          <div key={index}>
             <div className="text-xl font-semibold md:text-2xl xl:text-3xl">
-              {month}
+              {months[Number(index) + 1]}
             </div>
-            <div className="flex flex-col gap-2 py-3">
-              <MonthlyTransaction />
+            <div className="py-2">
+              <div className="flex flex-col gap-2 py-3">
+                <MonthlyTransaction weeks={month.weeks} />
+              </div>
             </div>
           </div>
         ))}
@@ -280,7 +291,6 @@ export function TransactionHistorySummary() {
 export function DailyTransaction({ t }) {
   const router = useRouter();
   function handleClickTransaction(transactionId) {
-    console.log(transactionId);
     router.push("transaction/edit/" + transactionId);
   }
   //displays information of a single transaction
@@ -315,20 +325,13 @@ export function DailyTransaction({ t }) {
   );
 }
 
-export function MonthlyTransaction() {
-  //use WeeklyHistory
-  const weeks: (string | number)[][] = [
-    ["week1", 100],
-    ["week2", 200],
-    ["week3", 200],
-    ["week4", 100],
-  ];
+export function MonthlyTransaction({ weeks }) {
+  console.log("weeks", weeks[0]);
   return (
     <div className="flex flex-col rounded-xl">
       <div className="r flex flex-row gap-2 rounded-t-xl border border-black bg-[#715F51] p-4 text-center md:text-2xl xl:text-3xl">
-        <div className="flex flex-1 text-center text-[#FEF8ED]">range</div>
-        <div className=" text-[#FEF8ED]">income</div>
-        <div className=" text-[#FEF8ED]">expense</div>
+        <div className="flex flex-1 text-center text-[#FEF8ED]"></div>
+        <div className=" text-[#FEF8ED]">Total</div>
       </div>
       <WeeklyTransaction week={weeks[0]} isLast={false} />
       <WeeklyTransaction week={weeks[1]} isLast={false} />
@@ -345,12 +348,17 @@ export function WeeklyTransaction({
   isLast: boolean;
   week: (string | number)[];
 }) {
+  console.log("small week", week);
   return (
     <div
       className={`flex flex-row border-b border-l border-r border-black bg-[#FEF8ED] p-4 md:text-xl xl:text-2xl ${isLast ? "rounded-b-xl" : ""}`}
     >
-      <div className="text-md flex-1 text-start font-medium">{week[0]}</div>
-      <div className="align-center text-md flex-1 text-end">{week[1]}</div>
+      <div className="text-md flex-1 text-start font-medium">
+        Week {week.week}
+      </div>
+      <div className="align-center text-md flex-1 text-end">
+        {week.total.toFixed(2)}
+      </div>
     </div>
   );
 }
