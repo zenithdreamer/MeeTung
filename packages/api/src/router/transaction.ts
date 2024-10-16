@@ -106,15 +106,21 @@ export const transactionRouter = {
       });
       console.log(transactions);
 
-      const transactionsByMonth = {};
-      transactions.forEach((t) => {
+      const transactionsByMonth: Record<string, (typeof transactions)[0][]> =
+        {};
+      transactions.forEach((t: (typeof transactions)[0]) => {
         const date = t.createdAt.toISOString().split("T")[0];
 
-        if (!transactionsByMonth[date]) {
-          transactionsByMonth[date] = [];
-        }
+        if (date) {
+          if (!transactionsByMonth[date]) {
+            transactionsByMonth[date] = [];
+          }
+          if (!transactionsByMonth[date]) {
+            transactionsByMonth[date] = [];
+          }
 
-        transactionsByMonth[date].push(t);
+          transactionsByMonth[date]?.push(t);
+        }
       });
       return transactionsByMonth;
     }),
