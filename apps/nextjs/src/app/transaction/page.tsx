@@ -30,7 +30,7 @@ export default function CreateTransactionPage() {
     description: "",
   });
 
-  const handleTransactionChange = (key, value) => {
+  const handleTransactionChange = (key: string, value: string | number) => {
     setTransaction((prev) => ({ ...prev, [key]: value }));
   };
 

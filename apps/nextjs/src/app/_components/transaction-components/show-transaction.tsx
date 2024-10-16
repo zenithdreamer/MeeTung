@@ -1,6 +1,6 @@
 "use client";
 
-export function ReceiptDate({ date }) {
+export function ReceiptDate({ date }: { date: string }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">DATE: </div>
@@ -9,7 +9,7 @@ export function ReceiptDate({ date }) {
   );
 }
 
-export function ReceiptCategory({ category }) {
+export function ReceiptCategory({ category }: { category: string }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">CATEGORY: </div>
@@ -18,7 +18,7 @@ export function ReceiptCategory({ category }) {
   );
 }
 
-export function ReceiptAmount({ amount }) {
+export function ReceiptAmount({ amount }: { amount: number }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">AMOUNT: </div>
@@ -27,7 +27,7 @@ export function ReceiptAmount({ amount }) {
   );
 }
 
-export function ReceiptPayMethod({ paymentMethod }) {
+export function ReceiptPayMethod({ paymentMethod }: { paymentMethod: string }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-6 pt-2 text-left text-base">
       <div className="text-[#A7B279]">PAY METHOD: </div>
@@ -36,7 +36,7 @@ export function ReceiptPayMethod({ paymentMethod }) {
   );
 }
 
-export function ReceiptNote({ description }) {
+export function ReceiptNote({ description }: { description: string }) {
   return (
     <div className="flex items-center border-b-2 border-dotted border-[#A7B279] pr-4 pt-2 text-left text-base">
       <div className="text-[#A7B279]">NOTE: </div>
@@ -53,7 +53,15 @@ export function ReceiptThank() {
   );
 }
 
-export function ShowReceipt({ transaction }) {
+interface Transaction {
+  date: string;
+  category: string;
+  amount: number;
+  payment: string;
+  description: string;
+}
+
+export function ShowReceipt({ transaction }: { transaction: Transaction }) {
   return (
     <div className="mx-auto flex bg-white shadow-lg">
       <div className="flex w-80 flex-col bg-[#F8F9FA] p-8 text-center md:text-2xl xl:text-3xl">
@@ -71,7 +79,7 @@ export function ShowReceipt({ transaction }) {
   );
 }
 
-export function ShowTransaction({ transaction }) {
+export function ShowTransaction({ transaction }: { transaction: Transaction }) {
   return (
     <div className="flex h-screen max-w-full bg-[#F1DCE0]">
       <div className="flex flex-1 items-center justify-center">

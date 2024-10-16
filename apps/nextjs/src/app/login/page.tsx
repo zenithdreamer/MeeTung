@@ -1,6 +1,3 @@
-import { Suspense } from "react";
-import Link from "next/link";
-
 import { LoginForm } from "../_components/login/login-form";
 
 export const runtime = "nodejs";
