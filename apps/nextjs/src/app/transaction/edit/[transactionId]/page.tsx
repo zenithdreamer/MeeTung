@@ -10,11 +10,21 @@ import { ShowTransaction } from "~/app/_components/transaction-components/show-t
 import { TransactionNav } from "~/app/_components/transaction-components/transaction-nav";
 import { api } from "~/trpc/react";
 
-// Function to convert Date to String
+interface Transaction {
+  date: string;
+  category: string;
+  categoryId: string;
+  amount: number;
+  paymentMethodId: string;
+  payment: string;
+  description: string;
+}
+
+// Function to convert Date to String with timezone consideration
 export function getDateString(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -24,63 +34,81 @@ export default function EditTransactionPage({
   params: { transactionId: string };
 }) {
   const router = useRouter();
-  const { data: currentUser } = api.user.getCurrentUser.useQuery();
   const { transactionId } = params;
 
-  if (!transactionId) {
-    return <div>Error: Transaction ID is missing.</div>;
-  }
+  const [transaction, setTransaction] = useState<Transaction>({
+    date: "",
+    categoryId: "",
+    category: "",
+    amount: 0,
+    paymentMethodId: "",
+    payment: "",
+    description: "",
+  });
+  const [category, setCategory] = useState<string | null>(null);
+  const [payment, setPayment] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
+  const { data: currentUser } = api.user.getCurrentUser.useQuery();
+  const editTransaction = api.transaction.editTransaction.useMutation();
   const {
     data: getTransaction,
     isLoading,
     isError,
   } = api.transaction.getTransactionById.useQuery({ transactionId });
 
-  const [transaction, setTransaction] = useState(null);
-  const [category, setCategory] = useState(null);
-  const [payment, setPayment] = useState(null);
-
-  if (isLoading) {
-    return <div>Loading...</div>; // Display loading state
-  }
-
-  if (isError) {
-    return <div>Error fetching transaction.</div>;
-  }
-
-  // Check if transaction is null
-  if (!transaction) {
-    return <div>No transaction found.</div>; // Handle case where transaction is not set
-  }
-
-  useEffect(() => {
-    if (getTransaction) {
-      setTransaction({
-        date: getDateString(getTransaction.createdAt),
-        categoryId: getTransaction.categoryId,
-        category: categoryry.name || "", // Assuming you want to set this later
-        amount: getTransaction.amount,
-        paymentMethodId: getTransaction.paymentMethodId,
-        payment: paymentt ? paymentt.name : "", // Assuming you want to set this later
-        description: getTransaction.description,
-      });
-    }
-  }, [getTransaction, category, payment]);
-
   const { data: categoryry } = api.category.getCategoryById.useQuery(
-    { id: getTransaction?.categoryId },
+    { id: getTransaction?.categoryId ?? "" },
     {
       enabled: !!getTransaction,
     },
   );
 
   const { data: paymentt } = api.paymentmethod.getTypeById.useQuery(
-    { id: getTransaction?.paymentMethodId },
+    { id: getTransaction?.paymentMethodId ?? "" },
     {
       enabled: !!getTransaction, // Only run the query if `getTransaction` is not null/undefined
     },
   );
+
+  useEffect(() => {
+    if (getTransaction) {
+      if (!getTransaction.categoryId) {
+        console.error("Transaction has no category.");
+        return;
+      }
+
+      if (!getTransaction.paymentMethodId) {
+        console.error("Transaction has no payment method.");
+        return;
+      }
+
+      if (typeof Number(getTransaction.amount) !== "number") {
+        console.error("Transaction amount is not a number.");
+        return;
+      }
+
+      if (!categoryry) {
+        console.error("Category not found.");
+        return;
+      }
+
+      if (!paymentt) {
+        console.error("Payment method not found.");
+        return;
+      }
+
+      setTransaction({
+        date: getDateString(getTransaction.createdAt),
+        categoryId: getTransaction.categoryId,
+        category: categoryry.name,
+        amount: Number(getTransaction.amount),
+        paymentMethodId: getTransaction.paymentMethodId,
+        payment: paymentt.name,
+        description: getTransaction.description ?? "",
+      });
+    }
+  }, [getTransaction, category, payment, categoryry, paymentt]);
 
   useEffect(() => {
     if (categoryry) {
@@ -96,15 +124,31 @@ export default function EditTransactionPage({
     }
   }, [paymentt]);
 
+  if (!transactionId) {
+    return <div>Error: Transaction ID is missing.</div>;
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Display loading state
+  }
+
+  if (isError) {
+    return <div>Error fetching transaction.</div>;
+  }
+
   if (getTransaction) {
     console.log(getTransaction.categoryId);
   }
 
-  const editTransaction = api.transaction.editTransaction.useMutation();
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleTransactionChange = (key, value) => {
-    setTransaction((prev) => ({ ...prev, [key]: value }));
+  const handleTransactionChange = (
+    key: keyof Transaction,
+    value: string | number,
+  ) => {
+    console.log("key", key, "value", value);
+    setTransaction((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   const handleDone = async () => {

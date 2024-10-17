@@ -25,6 +25,13 @@ export function EditReceiptDate({
   const [selectedDay, setSelectedDay] = useState(new Date(date).getDate());
 
   useEffect(() => {
+    // If selected year, month, or day changes is not set, use date passed in from props
+    if (!selectedYear || !selectedMonth || !selectedDay) {
+      setSelectedYear(new Date(date).getFullYear());
+      setSelectedMonth(new Date(date).getMonth() + 1);
+      setSelectedDay(new Date(date).getDate());
+    }
+
     const numDaysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
     const availableDays = Array.from(
       { length: numDaysInMonth },
@@ -37,6 +44,7 @@ export function EditReceiptDate({
     }
 
     const newDate = `${selectedYear}-${selectedMonth}-${selectedDay}`;
+    console.log("newDate", newDate);
     if (newDate !== date) {
       onDateChange(newDate);
     }
