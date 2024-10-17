@@ -31,6 +31,9 @@ jobs:
         shell: bash
         run: cp .env.example .env
 
+      - name: Prisma generate
+        run: pnpm db:generate
+
       - name: Lint
         run: pnpm lint && pnpm lint:ws
 
@@ -52,6 +55,9 @@ jobs:
 
       - name: Setup
         uses: ./tooling/github/setup
+
+      - name: Prisma generate
+        run: pnpm db:generate
 
       - name: Typecheck
         run: pnpm typecheck
