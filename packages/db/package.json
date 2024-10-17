@@ -30,7 +30,6 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env --",
     "reset": "pnpm with-env prisma migrate reset"
-
   },
   "prettier": "@mee-tung/prettier-config",
   "dependencies": {

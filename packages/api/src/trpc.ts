@@ -11,19 +11,8 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import type { Session } from "@mee-tung/auth";
-import { auth, validateToken } from "@mee-tung/auth";
+import { validateToken } from "@mee-tung/auth";
 import { prisma } from "@mee-tung/db";
-
-/**
- * Isomorphic Session getter for API requests
- * - Expo requests will have a session token in the Authorization header
- * - Next.js requests will have a session token in cookies
- */
-const isomorphicGetSession = async (headers: Headers) => {
-  const authToken = headers.get("Authorization") ?? null;
-  if (authToken) return validateToken(authToken);
-  return auth();
-};
 
 /**
  * 1. CONTEXT

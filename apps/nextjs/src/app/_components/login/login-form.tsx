@@ -26,7 +26,7 @@ export function LoginForm() {
           router.push("/");
         }, 1000);
       }
-    } catch (error) {
+    } catch {
       toast.error("Unable to Login");
     }
   };

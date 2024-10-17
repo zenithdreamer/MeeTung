@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-properties */
 import { PrismaClient } from "@prisma/client";
 
 export * from "@prisma/client";
@@ -5,7 +6,7 @@ export * from "@prisma/client";
 const globalPrisma = globalThis as { prisma?: PrismaClient };
 
 export const prisma =
-  globalPrisma.prisma ||
+  globalPrisma.prisma ??
   new PrismaClient({
     log:
       process.env.NODE_ENV === "development"

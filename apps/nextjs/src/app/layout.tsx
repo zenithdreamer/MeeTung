@@ -3,7 +3,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
 import { cn } from "@mee-tung/ui";
-import { ThemeProvider, ThemeToggle } from "@mee-tung/ui/theme";
+import { ThemeProvider } from "@mee-tung/ui/theme";
 import { Toaster } from "@mee-tung/ui/toast";
 
 import { TRPCReactProvider } from "~/trpc/react";

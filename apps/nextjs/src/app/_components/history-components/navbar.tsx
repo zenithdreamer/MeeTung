@@ -1,17 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLeft";
 import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
-
-import { toast } from "@mee-tung/ui/toast";
 
 import { api } from "~/trpc/react";
 
 const curDate = new Date();
 const curYear = curDate.getFullYear();
-const curMonth = curDate.getMonth();
+//const curMonth = curDate.getMonth();
 
 export function YearBackButton({
   year,
@@ -56,12 +53,10 @@ export function YearLabel(props: { year?: number }) {
 }
 
 export function HistoryPageNavBar() {
-  const [year, setYear] = useState(curYear);
-  const [month, setMonth] = useState(curMonth);
   const router = useRouter();
   const logout = api.auth.logout.useMutation();
 
-  const handleLogout = async () => {
+  const _handleLogout = async () => {
     const token = localStorage.getItem("token");
 
     if (token) {

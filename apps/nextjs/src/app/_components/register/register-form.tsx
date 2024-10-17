@@ -39,7 +39,7 @@ export function RegisterForm() {
       setTimeout(() => {
         router.push("/login");
       }, 1000);
-    } catch (error) {
+    } catch {
       toast.error("An error occurred during registration");
     }
   };

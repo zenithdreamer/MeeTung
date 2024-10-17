@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "@mee-tung/db";
 import { CreateCategorySchema } from "@mee-tung/validators";
 
-import { protectedProcedure, publicProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc";
 
 export const categoryRouter = {
   createCategory: protectedProcedure
