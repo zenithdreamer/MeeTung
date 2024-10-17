@@ -1,5 +1,10 @@
 /* eslint-disable no-restricted-properties */
-import type { DefaultSession, Session as NextAuthSession } from "next-auth";
+import type {
+  DefaultSession,
+  NextAuthConfig,
+  Session as NextAuthSession,
+} from "next-auth";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import { prisma } from "@mee-tung/db";
 
@@ -12,6 +17,25 @@ declare module "next-auth" {
 }
 
 export const isSecureContext = process.env.NODE_ENV !== "development";
+
+export const authConfig = {
+  adapter: PrismaAdapter(prisma),
+  providers: [],
+  callbacks: {
+    session: (opts) => {
+      if (!("user" in opts))
+        throw new Error("unreachable with session strategy");
+
+      return {
+        ...opts.session,
+        user: {
+          ...opts.session.user,
+          id: opts.user.id,
+        },
+      };
+    },
+  },
+} satisfies NextAuthConfig;
 
 export const validateToken = async (
   token: string,

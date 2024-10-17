@@ -2,7 +2,6 @@ import { cache } from "react";
 import { headers } from "next/headers";
 
 import { createCaller, createTRPCContext } from "@mee-tung/api";
-import { auth } from "@mee-tung/auth";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -13,7 +12,7 @@ const createContext = cache(async () => {
   heads.set("x-trpc-source", "rsc");
 
   return createTRPCContext({
-    session: await auth(),
+    session: null,
     headers: heads,
   });
 });
