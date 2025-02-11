@@ -20,6 +20,19 @@ export const authRouter = {
   login: publicProcedure.input(LoginPostSchema).mutation(async ({ input }) => {
     const { username, password } = input;
 
+    const userCount = await prisma.user.count();
+
+    if (userCount === 0) {
+      await prisma.user.create({
+        data: {
+          username,
+          firstname: "Admin",
+          lastname: "Admin",
+          password: await argon2.hash(password),
+        },
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         username,
