@@ -36,6 +36,11 @@ View and manage past transactions with daily and monthly summaries.
 
 ![image](https://github.com/user-attachments/assets/626f70e7-9a33-410f-a13e-cf2b302eed3c)
 
+## Contributors
+[@JAJAR94](https://github.com/JAJAR94)
+[@nanananice](https://github.com/nanananice)
+[@m0owo](https://github.com/m0owo)
+
 ## License
 MeeTung is open-source software licensed under the MIT License.
 
