@@ -7,13 +7,16 @@ on:
       - "*"
 
 env:
-  IMAGE_NAME: ghcr.io/zenthaidev/meetung-backend
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/meetung-backend
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   AUTH_DISCORD_ID: ${{ secrets.AUTH_DISCORD_ID }}
   AUTH_DISCORD_SECRET: ${{ secrets.AUTH_DISCORD_SECRET }}
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -22,8 +25,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ secrets.GHCR_IO_USERNAME }}
-          password: ${{ secrets.GHCR_IO_TOKEN }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker meta
         id: docker-meta

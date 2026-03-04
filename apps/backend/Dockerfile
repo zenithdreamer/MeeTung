@@ -13,7 +13,7 @@ FROM alpine AS base
 
 # Enable corepack and install turbo
 RUN corepack enable
-RUN pnpm install turbo --global
+RUN pnpm add -g turbo
 
 # Builder
 FROM base AS builder
@@ -30,7 +30,7 @@ RUN turbo prune @mee-tung/backend --docker
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
 RUN apt-get update
-RUN apt-get install -y libc6-dev
+RUN apt-get install -y libc6-dev python3 make g++
 WORKDIR /app
 
 # First install the dependencies (as they change less often)
@@ -45,8 +45,8 @@ COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
 # Generate the database and build types
-RUN turbo run build --filter=@mee-tung/db
 RUN pnpm db:generate
+RUN turbo run build --filter=@mee-tung/db
 
 RUN turbo run build --filter=@mee-tung/backend
 

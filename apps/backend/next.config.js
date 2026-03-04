@@ -8,6 +8,10 @@ createJiti(fileURLToPath(import.meta.url))("./src/env");
 const config = {
   reactStrictMode: true,
 
+  experimental: {
+    serverComponentsExternalPackages: ["argon2"],
+  },
+
   output: "standalone",
   async headers() {
     return [

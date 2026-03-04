@@ -13,7 +13,7 @@ FROM alpine AS base
 
 # Enable corepack and install turbo
 RUN corepack enable
-RUN pnpm install turbo --global
+RUN pnpm add -g turbo
 
 # Builder
 FROM base AS builder
@@ -38,15 +38,15 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
-RUN pnpm install
+RUN pnpm install --ignore-scripts
 
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
 # Generate the database and build types
-RUN turbo run build --filter=@mee-tung/db
 RUN pnpm db:generate
+RUN turbo run build --filter=@mee-tung/db
 
 RUN turbo run build --filter=@mee-tung/nextjs
 
